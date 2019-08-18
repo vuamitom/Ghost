@@ -5,54 +5,54 @@ const config = require('../../config');
 const constants = require('../../lib/constants');
 const urlUtils = require('../../lib/url-utils');
 const shared = require('../shared');
-// const adminMiddleware = require('./middleware');
+// const readerMiddleware = require('./middleware');
 
 module.exports = function setupReaderApp() {
-    debug('Admin setup start');
+    debug('Reader setup start');
     const readerApp = express();
 
     // Admin assets
     // @TODO ensure this gets a local 404 error handler
-    // const configMaxAge = config.get('caching:reader:maxAge');
-    // adminApp.use('/assets', serveStatic(
-    //     config.get('paths').clientAssets,
-    //     {maxAge: (configMaxAge || configMaxAge === 0) ? configMaxAge : constants.ONE_YEAR_MS, fallthrough: false}
-    // ));
+    const configMaxAge = config.get('caching:admin:maxAge');
+    readerApp.use('/assets', serveStatic(
+        config.get('paths').clientAssets,
+        {maxAge: (configMaxAge || configMaxAge === 0) ? configMaxAge : constants.ONE_YEAR_MS, fallthrough: false}
+    ));
 
     // // Service Worker for offline support
-    // adminApp.get(/^\/(sw.js|sw-registration.js)$/, require('./serviceworker'));
+    // readerApp.get(/^\/(sw.js|sw-registration.js)$/, require('./serviceworker'));
 
     // // Ember CLI's live-reload script
     // if (config.get('env') === 'development') {
-    //     adminApp.get('/ember-cli-live-reload.js', function emberLiveReload(req, res) {
+    //     readerApp.get('/ember-cli-live-reload.js', function emberLiveReload(req, res) {
     //         res.redirect(`http://localhost:4200${urlUtils.getSubdir()}/ghost/ember-cli-live-reload.js`);
     //     });
     // }
 
-    // // Render error page in case of maintenance
-    // adminApp.use(shared.middlewares.maintenance);
+    // Render error page in case of maintenance
+    readerApp.use(shared.middlewares.maintenance);
 
-    // // Force SSL if required
-    // // must happen AFTER asset loading and BEFORE routing
-    // adminApp.use(shared.middlewares.urlRedirects.adminRedirect);
+    // Force SSL if required
+    // must happen AFTER asset loading and BEFORE routing
+    readerApp.use(shared.middlewares.urlRedirects.adminRedirect);
 
-    // // Add in all trailing slashes & remove uppercase
-    // // must happen AFTER asset loading and BEFORE routing
-    // adminApp.use(shared.middlewares.prettyUrls);
+    // Add in all trailing slashes & remove uppercase
+    // must happen AFTER asset loading and BEFORE routing
+    readerApp.use(shared.middlewares.prettyUrls);
 
-    // // Cache headers go last before serving the request
-    // // Admin is currently set to not be cached at all
-    // adminApp.use(shared.middlewares.cacheControl('private'));
+    // Cache headers go last before serving the request
+    // Admin is currently set to not be cached at all
+    readerApp.use(shared.middlewares.cacheControl('private'));
     // // Special redirects for the admin (these should have their own cache-control headers)
-    // adminApp.use(adminMiddleware);
+    // readerApp.use(readerMiddleware);
 
-    // // Finally, routing
-    // adminApp.get('*', require('./controller'));
+    // Finally, routing
+    readerApp.get('*', require('./controller'));
 
-    // adminApp.use(shared.middlewares.errorHandler.pageNotFound);
-    // adminApp.use(shared.middlewares.errorHandler.handleHTMLResponse);
+    readerApp.use(shared.middlewares.errorHandler.pageNotFound);
+    readerApp.use(shared.middlewares.errorHandler.handleHTMLResponse);
 
-    // debug('Admin setup end');
+    debug('Reader setup end');
 
     return readerApp;
 };

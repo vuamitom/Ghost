@@ -11,7 +11,8 @@
         "internalStoragePath": "core/server/adapters/storage/",
         "internalSchedulingPath": "core/server/adapters/scheduling/",
         "migrationPath": "core/server/data/migrations",
-        "publicFilePath": "core/server/public"
+        "publicFilePath": "core/server/public",
+        "readerViews": "core/server/web/reader/views/"
     },
     "apps": {
         "internal": [
