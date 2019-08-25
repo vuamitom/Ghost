@@ -25,6 +25,8 @@ const buildDirectory = path.resolve(cwd, '.build');
 const distDirectory = path.resolve(cwd, '.dist');
 
 let hasBuiltClient = false;
+// let hasBuiltReaderClient = false;
+
 const logBuildingClient = function (grunt) {
     if (!hasBuiltClient) {
         grunt.log.writeln('Building admin client... (can take ~1min)');
@@ -284,21 +286,25 @@ const configureGrunt = function (grunt) {
                     npmInstall: true
                 },
                 projects: {
-                    'core/client': 'init'
+                    'core/client': 'init',
+                    'core/reader': 'init'
                 }
             },
 
             dev: {
-                'core/client': 'shell:ember:dev'
+                'core/client': 'shell:ember:dev',
+                'core/reader': 'reader:dev'
             },
 
             prod: {
-                'core/client': 'shell:ember:prod'
+                'core/client': 'shell:ember:prod',
+                'core/reader': 'reader:prod'
             },
 
             watch: {
                 projects: {
-                    'core/client': ['shell:ember:watch', '--live-reload-base-url="' + urlService.utils.getSubdir() + '/ghost/"']
+                    'core/client': ['shell:ember:watch', '--live-reload-base-url="' + urlService.utils.getSubdir() + '/ghost/"'],
+                    'core/reader': ['watch']
                 }
             }
         },
