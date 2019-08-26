@@ -6,8 +6,28 @@ module.exports = function (grunt) {
     // Find all of the task which start with `grunt-` and load them, rather than explicitly declaring them all
     require('matchdep').filterDev(['grunt-*', '!grunt-cli']).forEach(grunt.loadNpmTasks);
 
+
+    const webpackConfig = {
+        entry: ['./app/index.js'],
+        output: {
+            path: __dirname,
+            filename: 'finpub.js'            
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.(js|jsx)$/,
+                    exclude: /node_modules/,
+                    use: ['babel-loader']
+                }
+            ]
+        },
+        
+    };
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+
         clean: {
             built: {
                 src: ['dist/**']
@@ -20,16 +40,16 @@ module.exports = function (grunt) {
             }
         },
 
-        watch: {
-            scripts: {
-                files: ['app/*.js', 'app/**/*.js'],
-                tasks: ['webpack:build'],
-                options: {
-                  livereload: true,
-                  reload: true
-                }
-            }
-        },
+        // watch: {
+        //     scripts: {
+        //         files: ['app/*.js', 'app/**/*.js'],
+        //         tasks: ['webpack:dev'],
+        //         options: {
+        //           livereload: true,
+        //           reload: true
+        //         }
+        //     }
+        // },
 
         shell: {
             'npm-install': {
@@ -38,26 +58,11 @@ module.exports = function (grunt) {
         },
 
         webpack: {
-          build: {
-            entry: ['./app/app.js'],
-            output: {
-              path: 'dist',
-              filename: 'finpub.js'
+            options: {
+                stats: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
             },
-            stats: {
-              colors: false,
-              modules: true,
-              reasons: true
-            },
-            progress: true,
-            failOnError: true,
-            watch: true,
-            module: {
-              loaders: [
-                { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
-              ]
-            }
-          }
+            prod: webpackConfig,
+            dev: Object.assign({watch: true}, webpackConfig)    
         }
 
     });
@@ -65,6 +70,6 @@ module.exports = function (grunt) {
     grunt.registerTask('init', 'Install the client dependencies',
         ['shell:npm-install']
     );
-    grunt.registerTask('reader:dev', 'Build reader client', ['watch'])
+    // grunt.registerTask('reader:dev', 'Build reader client', ['watch'])
     // grunt.registerTask('default', ['babel']);
 };
