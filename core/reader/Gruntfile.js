@@ -12,8 +12,9 @@ module.exports = function (grunt) {
     const webpackConfig = {
         entry: ['./app/index.js'],
         output: {
-            path: path.resolve(__dirname, '..', '..','core', 'built', 'assets'),
-            filename: 'finpub.js'            
+            path: path.resolve(__dirname, '..', 'built', 'assets'),
+            filename: 'finpub.js',
+            publicPath: '/assets/'            
         },
         mode: 'production',
         module: {
@@ -45,7 +46,7 @@ module.exports = function (grunt) {
             new HtmlWebpackPlugin({
                 hash: true,
                 template: './public/index.html',
-                filename: 'index.html' //relative to root of the application
+                filename: 'finpub.html' //relative to root of the application
             })
         ],
         devServer: {
@@ -68,20 +69,31 @@ module.exports = function (grunt) {
             }
         },
 
-        // watch: {
-        //     scripts: {
-        //         files: ['app/*.js', 'app/**/*.js'],
-        //         tasks: ['webpack:dev'],
-        //         options: {
-        //           livereload: true,
-        //           reload: true
-        //         }
-        //     }
-        // },
+        watch: {
+            html: {
+                files: ['../built/assets/finpub.html'],
+                tasks: ['shell:cp-html'],
+            }
+        },
 
         shell: {
             'npm-install': {
                 command: 'yarn install'
+            },
+            'cp-html': {
+                command: 'cp ../built/assets/finpub.html ../server/web/reader/views/default.html'
+            }
+        },
+
+        bgShell: {
+            watch: {
+                cmd: function() {
+                    return 'grunt watch:html'
+                },
+                bg: true,
+                stderr: function (chunk) {
+                    grunt.log.error(chunk);
+                }
             }
         },
 
@@ -98,6 +110,8 @@ module.exports = function (grunt) {
     grunt.registerTask('init', 'Install the client dependencies',
         ['shell:npm-install']
     );
+
+    grunt.registerTask('reader:dev', 'Build reader client', ['bgShell:watch', 'webpack:dev'])
     // grunt.registerTask('reader:dev', 'Build reader client', ['watch'])
     // grunt.registerTask('default', ['babel']);
 };
