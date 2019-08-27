@@ -7,7 +7,7 @@ const urlUtils = require('../../lib/url-utils');
 const shared = require('../shared');
 // const readerMiddleware = require('./middleware');
 
-module.exports = function setupReaderApp() {
+module.exports = function setupReaderApp() {    
     debug('Reader setup start');
     const readerApp = express();
 

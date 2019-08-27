@@ -8,13 +8,14 @@ module.exports = function (grunt) {
     const path = require('path');
     const MiniCssExtractPlugin = require('mini-css-extract-plugin');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
+    const WebpackShellPlugin = require('webpack-shell-plugin');
 
     const webpackConfig = {
         entry: ['./app/index.js'],
         output: {
             path: path.resolve(__dirname, '..', 'built', 'assets'),
             filename: 'finpub.js',
-            publicPath: '/assets/'            
+            publicPath: 'assets/'            
         },
         mode: 'production',
         module: {
@@ -47,6 +48,9 @@ module.exports = function (grunt) {
                 hash: true,
                 template: './public/index.html',
                 filename: 'finpub.html' //relative to root of the application
+            }),
+            new WebpackShellPlugin({
+                onBuildEnd: ['cp ../built/assets/finpub.html ../server/web/reader/views/default.html']
             })
         ],
         devServer: {
@@ -69,12 +73,12 @@ module.exports = function (grunt) {
             }
         },
 
-        watch: {
-            html: {
-                files: ['../built/assets/finpub.html'],
-                tasks: ['shell:cp-html'],
-            }
-        },
+        // watch: {
+        //     html: {
+        //         files: ['../built/assets/finpub.html'],
+        //         tasks: ['shell:cp-html'],
+        //     }
+        // },
 
         shell: {
             'npm-install': {
@@ -85,17 +89,17 @@ module.exports = function (grunt) {
             }
         },
 
-        bgShell: {
-            watch: {
-                cmd: function() {
-                    return 'grunt watch:html'
-                },
-                bg: true,
-                stderr: function (chunk) {
-                    grunt.log.error(chunk);
-                }
-            }
-        },
+        // bgShell: {
+        //     watch: {
+        //         cmd: function() {
+        //             return 'grunt watch:html'
+        //         },
+        //         bg: true,
+        //         stderr: function (chunk) {
+        //             grunt.log.error(chunk);
+        //         }
+        //     }
+        // },
 
         webpack: {
             options: {
@@ -111,7 +115,7 @@ module.exports = function (grunt) {
         ['shell:npm-install']
     );
 
-    grunt.registerTask('reader:dev', 'Build reader client', ['bgShell:watch', 'webpack:dev'])
+    // grunt.registerTask('reader:dev', 'Build reader client', ['bgShell:watch', 'webpack:dev'])
     // grunt.registerTask('reader:dev', 'Build reader client', ['watch'])
     // grunt.registerTask('default', ['babel']);
 };

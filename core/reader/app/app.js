@@ -1,22 +1,12 @@
 import React from 'react';
 
 function App() {
+  console.log('test 111');
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={''} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div class="ember-load-indicator">
+      <div class="gh-loading-content">
+          <div class="gh-loading-spinner"></div>
+      </div>
     </div>
   );
 }

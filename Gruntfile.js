@@ -293,7 +293,7 @@ const configureGrunt = function (grunt) {
 
             dev: {
                 'core/client': 'shell:ember:dev',
-                'core/reader': 'reader:dev'
+                'core/reader': 'webpack:dev'
             },
 
             prod: {
@@ -304,7 +304,7 @@ const configureGrunt = function (grunt) {
             watch: {
                 projects: {
                     'core/client': ['shell:ember:watch', '--live-reload-base-url="' + urlService.utils.getSubdir() + '/ghost/"'],
-                    'core/reader': ['reader:dev']
+                    'core/reader': ['webpack:dev']
                 }
             }
         },

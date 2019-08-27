@@ -28,7 +28,7 @@ module.exports = function readerController(req, res) {
     if (config.get('adminFrameProtection')) {
         headers['X-Frame-Options'] = 'sameorigin';
     }
-
+    // console.log('====================================================??????? ', templatePath)
     res.sendFile(templatePath, {headers});
 };
  
