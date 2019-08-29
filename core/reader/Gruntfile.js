@@ -15,7 +15,7 @@ module.exports = function (grunt) {
         output: {
             path: path.resolve(__dirname, '..', 'built', 'assets'),
             filename: 'finpub.js',
-            publicPath: 'assets/'            
+            publicPath: '/reader/assets/'            
         },
         mode: 'production',
         module: {
@@ -106,7 +106,11 @@ module.exports = function (grunt) {
                 stats: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
             },
             prod: webpackConfig,
-            dev: Object.assign({watch: true, mode: 'development'}, webpackConfig)    
+            dev: Object.assign({
+                watch: true, 
+                mode: 'development',
+                devtool: 'inline-source-map'
+            }, webpackConfig)    
         }
 
     });
