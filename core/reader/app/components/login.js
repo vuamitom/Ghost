@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class Login extends Component {
+    
     render() {
         return <main class='gh-main' role='main'>
             <div class='gh-flow'>
@@ -14,15 +15,18 @@ class Login extends Component {
                                     placeholder="Email Address" 
                                     autocorrect="off" autocapitalize="off" 
                                     class="email ember-text-field gh-input ember-view" 
-                                    type="email">
+                                    type="email"/>
                             </div>
                             <div class='form-group'>
                                 <input name="password" autocomplete="current-password" 
                                     tabindex="2" placeholder="Password" 
                                     autocorrect="off" 
                                     class="password ember-text-field gh-input ember-view" 
-                                    type="password">
+                                    type="password"/>
                             </div>
+                            <button tabindex="3" class="login gh-btn gh-btn-blue gh-btn-block gh-btn-icon ember-view" type="submit">
+                                <span>Sign In</span>
+                            </button>
                         </form>
                     </section>
                 </div>

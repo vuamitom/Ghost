@@ -12,7 +12,7 @@
       content="Finpub reader page"
     />
     <link rel="apple-touch-icon" href="logo192.png" />
-    <title>Finpub</title>
+    <title><%= htmlWebpackPlugin.options.title %></title>
 
     <meta name="HandheldFriendly" content="True" />
     <meta name="MobileOptimized" content="320" />
@@ -36,7 +36,7 @@
     <meta name="msapplication-square150x150logo" content="assets/img/medium.png" />
     <meta name="msapplication-square310x310logo" content="assets/img/large.png" />
 
-    <link rel="stylesheet" href="assets/ghost.css" title="light">
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.options.assetPath %>/ghost.css" title="light">
   </head>
   <body class="ember-application">
     <noscript>You need to enable JavaScript to run this app.</noscript>

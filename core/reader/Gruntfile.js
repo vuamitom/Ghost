@@ -9,13 +9,14 @@ module.exports = function (grunt) {
     const MiniCssExtractPlugin = require('mini-css-extract-plugin');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
     const WebpackShellPlugin = require('webpack-shell-plugin');
+    const assetPath = '/reader/assets';
 
     const webpackConfig = {
         entry: ['./app/index.js'],
         output: {
             path: path.resolve(__dirname, '..', 'built', 'assets'),
             filename: 'finpub.js',
-            publicPath: '/reader/assets/'            
+            publicPath: assetPath            
         },
         mode: 'production',
         module: {
@@ -47,6 +48,8 @@ module.exports = function (grunt) {
             new HtmlWebpackPlugin({
                 hash: true,
                 template: './public/index.html',
+                title: 'Finpub Reader',
+                assetPath: assetPath,
                 filename: 'finpub.html' //relative to root of the application
             }),
             new WebpackShellPlugin({
