@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import Login from './components/login';
 import Main from './components/main';
-import Auth from './services/auth';
+import Session from './services/session';
 
 
 class Index extends Component {
 
   componentDidMount() {
     if (this.props.user === null) {
-      Auth.isAuthenticated().then(info => {
+      Session.isAuthenticated().then(info => {
         this.props.history.push('/login');
       });
     }
