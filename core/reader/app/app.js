@@ -1,38 +1,17 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 import Login from './components/login';
 import Main from './components/main';
 import Session from './services/session';
 
 
-// class Index extends Component {
-//   componentDidMount() {
-//     if (this.props.user === null) {
-//       Session.isAuthenticated().then(info => {
-//         this.props.history.push('/login');
-//       });
-//     }
-//   }
-//   render() {
-//     return <div class='ember-load-indicator'>
-//       <div class='gh-loading-content'>
-//           <div class='gh-loading-spinner'></div>
-//       </div>
-//     </div>
-//   }
-// }
-
-function Default() {
-  let target = { pathname: "/_" };
-  return <Redirect to={target} />
-}
 
 function PrivateRoute({ component: Component, ...rest }) {
-  return (
+  return (    
     <Route
       {...rest}
-      render={props =>
-        Session.isAuthenticated() ? (
+      render={props => {
+        return Session.isAuthenticated() ? (
           <Component {...props} />
         ) : (
           <Redirect
@@ -42,7 +21,7 @@ function PrivateRoute({ component: Component, ...rest }) {
             }}
           />
         )
-      }
+      }}
     />
   );
 }
@@ -61,9 +40,10 @@ class App extends Component {
     return (
       <div class="gh-viewport" >
         <Router basename='/reader' >
-          <Route path='/login' component={Login} />
-          <PrivateRoute path='/_' component={Main} />   
-          <Route component={Default} />
+          <Switch>
+            <Route path='/login' component={Login} />
+            <PrivateRoute path='/' component={Main} />   
+          </Switch>
         </Router>
       </div>
     );
