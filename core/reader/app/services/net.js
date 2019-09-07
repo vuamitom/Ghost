@@ -3,9 +3,11 @@ function status(response) {
     if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response)
     } else {
+        if (response.status >= 400 && response.status < 500) {
+            // unauthorized, expired session
+        }
         return Promise.reject(response)
     }
-
 }
 
 function content(response) {
@@ -17,8 +19,33 @@ function content(response) {
     //     return response.text();
     // }
     return Promise.resolve(response);
-}cc
+}
 const http = {
+    get: function(url, data, opts) {
+        let config = {
+            method: 'get',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            credentials: 'include'
+        };
+        if (data) {
+            let params = [];
+            for (let k in data) {
+                if (data.hasOwnProperty(k)) {
+                    params.push(k + '=' + encodeURIComponent(data[k]));
+                }
+            }
+            if (params.length > 0)
+                url = url + '?' + params.join('&');
+        }
+
+        config = Object.assign(config, opts || {})
+        return fetch(url, config)
+            .then(status)
+            .then(content);
+    },
+
     post: function(url, data, opts) {
         let config = {
             method: 'post',
@@ -29,7 +56,7 @@ const http = {
             credentials: 'include'
         };
 
-        config = Object.assign(opts || {}, config);
+        config = Object.assign(config, opts || {});
         return fetch(url, config)
                 .then(status)
                 .then(content);

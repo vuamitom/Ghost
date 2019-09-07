@@ -1,8 +1,50 @@
 import React, { Component } from 'react';
+import { Redirect } from "react-router-dom";
 import Session from '../services/session';
 
+function Loading() {
+    return (<div class='ember-load-indicator'>
+      <div class='gh-loading-content'>
+          <div class='gh-loading-spinner'></div>
+      </div>
+    </div>)
+}
+
 class Login extends Component {
-    state = { username: '', password: '', error: null }
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+            fetched: Session.user !== null,
+            redirectToReferrer: false,
+            username: '', 
+            password: '', 
+            error: null 
+        }
+
+    }
+
+    componentDidMount() {
+        if (!this.state.fetched) {
+            Session.fetchUserInfo()
+                .then(userInfo => {
+                    // if already login, redirect
+                    if (userInfo) {
+                        this.redirect();
+                    }
+                    else {
+                        // show login
+                        this.setState({fetched: true});
+                    }
+                    
+                });
+        }
+    }
+
+    redirect() {
+        console.log('redirect');
+        this.setState({redirectToReferrer: true});
+    }
 
     usernameChanged = (e) => {
         this.setState({username: e.target.value});
@@ -20,7 +62,16 @@ class Login extends Component {
             .then(resp => {
                 if (resp.status === 201) {
                     // session created
-                    // redirect to 
+                    // fetch user Info
+                    Session.fetchUserInfo().then(info => {
+                        if (info) {
+                            // redirect;
+                            this.redirect();
+                        }
+                        else {
+                            this.setState({error: 'Could not get user info'});
+                        }
+                    })
                 }
             })
             .catch(e => {
@@ -29,6 +80,16 @@ class Login extends Component {
     }
 
     render() {
+
+        if (this.state.redirectToReferrer) {
+            let { from } = this.props.location.state || { from: { pathname: "/" } };
+            return <Redirect to={from} />;
+        }
+        
+        if (!this.state.fetched) {
+            return <Loading />;
+        }        
+
         let error = null;
         if (this.state.error) {
             error = <p class='main-error'>{this.state.error}</p>
