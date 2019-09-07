@@ -5,27 +5,27 @@ const urlService = require('../../../../../../../../frontend/services/url');
 const urlUtils = require('../../../../../../../../server/lib/url-utils');
 const urlUtil = require('../../../../../../../../server/api/v2/utils/serializers/output/utils/url');
 
-describe('Unit: v2/utils/serializers/output/utils/url', () => {
-    beforeEach(() => {
+describe('Unit: v2/utils/serializers/output/utils/url', function () {
+    beforeEach(function () {
         sinon.stub(urlService, 'getUrlByResourceId').returns('getUrlByResourceId');
         sinon.stub(urlUtils, 'urlFor').returns('urlFor');
-        sinon.stub(urlUtils, 'makeAbsoluteUrls').returns({html: sinon.stub()});
+        sinon.stub(urlUtils, 'htmlRelativeToAbsolute').returns({html: sinon.stub()});
     });
 
-    afterEach(() => {
+    afterEach(function () {
         sinon.restore();
     });
 
-    describe('Ensure calls url service', () => {
+    describe('Ensure calls url service', function () {
         let pageModel;
 
-        beforeEach(() => {
+        beforeEach(function () {
             pageModel = (data) => {
                 return Object.assign(data, {toJSON: sinon.stub().returns(data)});
             };
         });
 
-        it('meta & models & relations', () => {
+        it('meta & models & relations', function () {
             const post = pageModel(testUtils.DataGenerator.forKnex.createPost({
                 id: 'id1',
                 feature_image: 'value'
@@ -39,8 +39,8 @@ describe('Unit: v2/utils/serializers/output/utils/url', () => {
             urlUtils.urlFor.getCall(0).args.should.eql(['image', {image: 'value'}, true]);
             urlUtils.urlFor.getCall(1).args.should.eql(['home', true]);
 
-            urlUtils.makeAbsoluteUrls.callCount.should.eql(1);
-            urlUtils.makeAbsoluteUrls.getCall(0).args.should.eql([
+            urlUtils.htmlRelativeToAbsolute.callCount.should.eql(1);
+            urlUtils.htmlRelativeToAbsolute.getCall(0).args.should.eql([
                 '## markdown',
                 'urlFor',
                 'getUrlByResourceId',

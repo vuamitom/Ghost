@@ -421,7 +421,7 @@ describe('Importer', function () {
         });
 
         it('can load a file (subdirectory)', function (done) {
-            ImageHandler.__set__('urlUtils', urlUtils.getInstance({url: 'http://localhost:82832/subdir'}));
+            ImageHandler.__set__('urlUtils', urlUtils.getInstance({url: 'http://localhost:65535/subdir'}));
 
             var filename = 'test-image.jpeg',
                 file = [{
@@ -447,18 +447,18 @@ describe('Importer', function () {
                     path: '/my/test/testing.png',
                     name: 'testing.png'
                 },
-                    {
-                        path: '/my/test/photo/kitten.jpg',
-                        name: 'photo/kitten.jpg'
-                    },
-                    {
-                        path: '/my/test/content/images/animated/bunny.gif',
-                        name: 'content/images/animated/bunny.gif'
-                    },
-                    {
-                        path: '/my/test/images/puppy.jpg',
-                        name: 'images/puppy.jpg'
-                    }],
+                {
+                    path: '/my/test/photo/kitten.jpg',
+                    name: 'photo/kitten.jpg'
+                },
+                {
+                    path: '/my/test/content/images/animated/bunny.gif',
+                    name: 'content/images/animated/bunny.gif'
+                },
+                {
+                    path: '/my/test/images/puppy.jpg',
+                    name: 'images/puppy.jpg'
+                }],
                 storeSpy = sinon.spy(store, 'getUniqueFileName'),
                 storageSpy = sinon.spy(storage, 'getStorage');
 

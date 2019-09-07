@@ -57,8 +57,6 @@ const mapPost = (model, frame) => {
         });
     }
 
-    delete jsonModel.type;
-
     return jsonModel;
 };
 

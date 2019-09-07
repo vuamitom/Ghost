@@ -55,12 +55,12 @@ const forPost = (id, attrs, frame) => {
             urlOptions.assetsOnly = false;
         }
 
-        attrs.html = urlUtils.makeAbsoluteUrls(
+        attrs.html = urlUtils.htmlRelativeToAbsolute(
             attrs.html,
             urlUtils.urlFor('home', true),
             attrs.url,
             urlOptions
-        ).html();
+        );
     }
 
     if (frame.options.columns && !frame.options.columns.includes('url')) {

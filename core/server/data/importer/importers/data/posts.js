@@ -1,9 +1,9 @@
-const debug = require('ghost-ignition').debug('importer:posts'),
-    _ = require('lodash'),
-    uuid = require('uuid'),
-    BaseImporter = require('./base'),
-    converters = require('../../../../lib/mobiledoc/converters'),
-    validation = require('../../../validation');
+const debug = require('ghost-ignition').debug('importer:posts');
+const _ = require('lodash');
+const uuid = require('uuid');
+const BaseImporter = require('./base');
+const converters = require('../../../../lib/mobiledoc/converters');
+const validation = require('../../../validation');
 
 class PostsImporter extends BaseImporter {
     constructor(allDataFromFile) {
@@ -152,6 +152,14 @@ class PostsImporter extends BaseImporter {
         this.addNestedRelations();
 
         _.each(this.dataToImport, (model) => {
+            // during 2.28.x we had `post.type` in place of `post.page`
+            // this needs normalising back to `post.page`
+            // TODO: switch back to `post.page->type` in v3
+            if (_.has(model, 'type')) {
+                model.page = model.type === 'post' ? false : true;
+                delete model.type;
+            }
+
             // NOTE: we remember the original post id for disqus
             // (see https://github.com/TryGhost/Ghost/issues/8963)
 
@@ -200,7 +208,7 @@ class PostsImporter extends BaseImporter {
         // For any further future duplication detection, see https://github.com/TryGhost/Ghost/issues/8717.
         let slugs = [];
         this.dataToImport = _.filter(this.dataToImport, (post) => {
-            if (slugs.indexOf(post.slug) !== -1) {
+            if (!!post.slug && slugs.indexOf(post.slug) !== -1) {
                 this.problems.push({
                     message: 'Entry was not imported and ignored. Detected duplicated entry.',
                     help: this.modelName,
