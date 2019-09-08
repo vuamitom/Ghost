@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 import Login from './components/login';
+import Signup from './components/signup';
 import Main from './components/main';
 import Session from './services/session';
 
@@ -38,10 +39,11 @@ class App extends Component {
 
   render() {
     return (
-      <div class="gh-viewport" >
+      <div className="gh-viewport" >
         <Router basename='/reader' >
           <Switch>
             <Route path='/login' component={Login} />
+            <Route path='/signup' component={Signup} />
             <PrivateRoute path='/' component={Main} />   
           </Switch>
         </Router>

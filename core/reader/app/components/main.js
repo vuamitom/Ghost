@@ -9,16 +9,16 @@ class Main extends Component {
         let {match} = this.props;
         console.log(match);
 
-        return [<nav class='gh-nav'>
-            <header class='gh-nav-menu'>
-                <div class='gh-nav-menu-details'>
+        return [<nav className='gh-nav' key={'nav'}>
+            <header className='gh-nav-menu'>
+                <div className='gh-nav-menu-details'>
 
                 </div>
             </header>
-            <section class='gh-nav-body'>
-                <div class='gh-nav-top'>
-                    <ul class='gh-nav-list gh-nav-main'>
-                        <li class='relative'>
+            <section className='gh-nav-body'>
+                <div className='gh-nav-top'>
+                    <ul className='gh-nav-list gh-nav-main'>
+                        <li className='relative'>
                             <NavLink activeClassName={'active'} to={`${match.url}profile`}>Profile</NavLink>
                             <NavLink activeClassName={'active'} to={`${match.url}purchases`}>Purchases</NavLink>
                         </li>
@@ -26,8 +26,8 @@ class Main extends Component {
                 </div>
             </section>
         </nav>,
-        <main class='gh-main'>
-            <section class='gh-canvas'>
+        <main className='gh-main' key={'main'}>
+            <section className='gh-canvas'>
                 <Switch>
                     <Route path={`${match.path}/profile`} component={Profile}/>
                     <Route path={`${match.path}/purchases`} component={Purchases} />
