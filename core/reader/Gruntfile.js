@@ -11,55 +11,67 @@ module.exports = function (grunt) {
     const WebpackShellPlugin = require('webpack-shell-plugin');
     const assetPath = '/reader/assets';
 
-    const webpackConfig = {
-        entry: ['./app/index.js'],
-        output: {
-            path: path.resolve(__dirname, '..', 'built', 'assets'),
-            filename: 'finpub.js',
-            publicPath: assetPath            
-        },
-        mode: 'production',
-        module: {
-            rules: [
-                {
-                    test: /\.(js|jsx)$/,
-                    exclude: /node_modules/,
-                    use: ['babel-loader']
-                },
-                {
-                    test: /\.css$/i,
-                    use: [process.env.NODE_ENV !== 'production'? 'style-loader': MiniCssExtractPlugin.loader, 'css-loader'],
-                },
-                {
-                    test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
-                    loader: 'url-loader',
-                    options: {
-                      limit: 8192,
-                    },
-                },
-            ],
 
-        },
-        plugins: [
-            new MiniCssExtractPlugin({
-                filename: 'finpub.css',
-                chunkFilename: 'finpub.[id].css'
-            }),
-            new HtmlWebpackPlugin({
-                hash: true,
-                template: './public/index.html',
-                title: 'Finpub Reader',
-                assetPath: assetPath,
-                filename: 'finpub.html' //relative to root of the application
-            }),
-            new WebpackShellPlugin({
-                onBuildEnd: ['cp ../built/assets/finpub.html ../server/web/reader/views/default.html']
-            })
-        ],
-        devServer: {
-            writeToDisk: true
+    const generateWebpackConfig = (isProd) => {
+        
+        let conf = {
+            entry: ['./app/index.js'],
+            output: {
+                path: path.resolve(__dirname, '..', 'built', 'assets'),
+                filename: 'finpub.js',
+                publicPath: assetPath            
+            },
+            mode: isProd? 'production': 'development',
+            module: {
+                rules: [
+                    {
+                        test: /\.(js|jsx)$/,
+                        exclude: /node_modules/,
+                        use: ['babel-loader']
+                    },
+                    {
+                        test: /\.css$/i,
+                        use: [!isProd? 'style-loader': MiniCssExtractPlugin.loader, 'css-loader'],
+                    },
+                    {
+                        test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
+                        loader: 'url-loader',
+                        options: {
+                          limit: 8192,
+                        },
+                    },
+                ],
+
+            },
+            plugins: [
+                new MiniCssExtractPlugin({
+                    filename: 'finpub.css',
+                    chunkFilename: 'finpub.[id].css'
+                }),
+                new HtmlWebpackPlugin({
+                    hash: true,
+                    template: './public/index.html',
+                    title: 'Finpub Reader',
+                    assetPath: assetPath,
+                    filename: 'finpub.html' //relative to root of the application
+                }),
+                new WebpackShellPlugin({
+                    onBuildEnd: ['cp ../built/assets/finpub.html ../server/web/reader/views/' + (isProd ? 'default-prod.html': 'default.html')]
+                })
+            ],
+            devServer: {
+                writeToDisk: true
+            }
+        };
+
+        if (!isProd) {
+            conf = Object.assign({
+                watch: true,
+                devtool: 'inline-source-map'
+            }, conf)
         }
-    };
+        return conf;
+    }
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -86,9 +98,6 @@ module.exports = function (grunt) {
         shell: {
             'npm-install': {
                 command: 'yarn install'
-            },
-            'cp-html': {
-                command: 'cp ../built/assets/finpub.html ../server/web/reader/views/default.html'
             }
         },
 
@@ -108,12 +117,8 @@ module.exports = function (grunt) {
             options: {
                 stats: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
             },
-            prod: webpackConfig,
-            dev: Object.assign({
-                watch: true, 
-                mode: 'development',
-                devtool: 'inline-source-map'
-            }, webpackConfig)    
+            prod: () => generateWebpackConfig(true),
+            dev: () => generateWebpackConfig(false)                
         }
 
     });
