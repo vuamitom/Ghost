@@ -5,8 +5,6 @@ import Purchases from './main/purchases';
 
 class Main extends Component {
 
-
-
     render() {
         let {match} = this.props;
         console.log(match);

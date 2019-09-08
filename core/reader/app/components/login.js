@@ -42,7 +42,18 @@ class Login extends Component {
     }
 
     redirect() {
-        console.log('redirect');
+        // if it is a request from another app
+        // kick back
+        let queryParam = window.location.search;
+        if (queryParam) {
+            queryParam = new URLSearchParams(queryParam);
+            if (queryParam.has('next')) {
+                window.location.href = queryParam.get('next');
+                return;
+            }
+        }
+
+        // else, enter reader app
         this.setState({redirectToReferrer: true});
     }
 
@@ -82,7 +93,6 @@ class Login extends Component {
     render() {
 
         if (this.state.redirectToReferrer) {
-            console.log('redirect', this.props.location);
             let { from } = this.props.location.state || { from: { pathname: "/" } };
             return <Redirect to={from} />;
         }
