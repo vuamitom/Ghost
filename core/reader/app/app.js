@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { lazy, Suspense, Component } from 'react';
 import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 import Login from './components/login';
 import Signup from './components/signup';
-import Main from './components/main';
 import Session from './services/session';
+import Loading from './components/widgets/loading';
 
+const Main = lazy(() => import('./components/main'));
 
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -27,7 +28,13 @@ function PrivateRoute({ component: Component, ...rest }) {
   );
 }
 
-
+function WaitingComponent(Component) {
+  return props => (
+    <Suspense fallback={<Loading />}>
+      <Component {...props} />
+    </Suspense>
+  );
+}
 
 // function PropRoute({ component: Component, ...rest }) {
 //   return <Route {...rest} render={routeProps => {
@@ -44,7 +51,7 @@ class App extends Component {
           <Switch>
             <Route path='/login' component={Login} />
             <Route path='/signup' component={Signup} />
-            <PrivateRoute path='/' component={Main} />   
+            <PrivateRoute path='/' component={WaitingComponent(Main)} />   
           </Switch>
         </Router>
       </div>
