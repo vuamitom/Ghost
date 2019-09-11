@@ -47,7 +47,7 @@ module.exports = function setupParentApp(options = {}) {
     parentApp.use('/ghost', require('./admin')());
 
     // READER
-    parentApp.use('/reader', require('./reader')());
+    parentApp.use('/reader', require('./finpub')());
 
     // BLOG
     parentApp.use(require('./site')(options));

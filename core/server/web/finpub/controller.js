@@ -21,6 +21,7 @@ module.exports = function readerController(req, res) {
             common.logging.error(err);
         });
 
+    
     const defaultTemplate = config.get('env') === 'production' ? 'default-prod.html' : 'default.html';
     const templatePath = path.resolve(config.get('paths').readerViews, defaultTemplate);
     const headers = {};

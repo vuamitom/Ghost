@@ -56,7 +56,7 @@ module.exports = function (grunt) {
                     filename: 'finpub.html' //relative to root of the application
                 }),
                 new WebpackShellPlugin({
-                    onBuildEnd: ['cp ../built/assets/finpub.html ../server/web/reader/views/' + (isProd ? 'default-prod.html': 'default.html')]
+                    onBuildEnd: ['cp ../built/assets/finpub.html ../server/web/finpub/views/' + (isProd ? 'default-prod.html': 'default.html')]
                 })
             ],
             devServer: {
