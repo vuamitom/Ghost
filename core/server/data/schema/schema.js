@@ -19,7 +19,7 @@ module.exports = {
         plaintext: {type: 'text', maxlength: 1000000000, fieldtype: 'long', nullable: true},
         feature_image: {type: 'string', maxlength: 2000, nullable: true},
         featured: {type: 'bool', nullable: false, defaultTo: false},
-        type: {type: 'string', maxlength: 50, nullable: false, defaultTo: 'post', validations: {isIn: [['post', 'page']]}},
+        page: {type: 'bool', nullable: false, defaultTo: false},
         status: {type: 'string', maxlength: 50, nullable: false, defaultTo: 'draft'},
         locale: {type: 'string', maxlength: 6, nullable: true},
         visibility: {
@@ -386,8 +386,6 @@ module.exports = {
     members: {
         id: {type: 'string', maxlength: 24, nullable: false, primary: true},
         email: {type: 'string', maxlength: 191, nullable: false, unique: true, validations: {isEmail: true}},
-        name: {type: 'string', maxlength: 191, nullable: false},
-        password: {type: 'string', maxlength: 60, nullable: true},
         created_at: {type: 'dateTime', nullable: false},
         created_by: {type: 'string', maxlength: 24, nullable: false},
         updated_at: {type: 'dateTime', nullable: true},

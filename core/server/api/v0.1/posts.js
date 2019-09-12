@@ -16,55 +16,6 @@ const Promise = require('bluebird'),
     ],
     unsafeAttrs = ['author_id', 'status', 'authors'];
 
-const mongo = require('../v2/utils/serializers/input/utils/mongo.js');
-
-/*
- * Replaces references of "page" in filters
- * with the correct column "type"
- */
-function replacePageWithType(mongoJSON) {
-    return mongo.mapKeysAndValues(mongoJSON, {
-        key: {
-            from: 'page',
-            to: 'type'
-        },
-        values: [{
-            from: false,
-            to: 'post'
-        }, {
-            from: true,
-            to: 'page'
-        }]
-    });
-}
-
-function convertTypeToPage(model) {
-    // Respect include param
-    if (!Object.hasOwnProperty.call(model, 'type')) {
-        return model;
-    }
-    model.page = model.type === 'page';
-    delete model.type;
-    return model;
-}
-
-function convertPageToType(model) {
-    if (!Object.hasOwnProperty.call(model, 'page')) {
-        return model;
-    }
-
-    if (model.page === true) {
-        model.type = 'page';
-    } else if (model.page === false) {
-        model.type = 'post';
-    } else {
-        // This is to ensure that invalid page props generate a ValidationError
-        model.type = 'UNKNOWN_PAGE_OPTION';
-    }
-    delete model.page;
-    return model;
-}
-
 let posts;
 
 /**
@@ -107,12 +58,10 @@ posts = {
          * @returns {Object} options
          */
         function modelQuery(options) {
-            options.mongoTransformer = replacePageWithType;
-
             return models.Post.findPage(options)
                 .then(({data, meta}) => {
                     return {
-                        posts: data.map(model => urlsForPost(model.id, model.toJSON(options), options)).map(convertTypeToPage),
+                        posts: data.map(model => urlsForPost(model.id, model.toJSON(options), options)),
                         meta: meta
                     };
                 });
@@ -152,8 +101,6 @@ posts = {
          * @returns {Object} options
          */
         function modelQuery(options) {
-            options.mongoTransformer = replacePageWithType;
-
             return models.Post.findOne(options.data, omit(options, ['data']))
                 .then((model) => {
                     if (!model) {
@@ -163,7 +110,7 @@ posts = {
                     }
 
                     return {
-                        posts: [urlsForPost(model.id, model.toJSON(options), options)].map(convertTypeToPage)
+                        posts: [urlsForPost(model.id, model.toJSON(options), options)]
                     };
                 });
         }
@@ -201,7 +148,7 @@ posts = {
          * @returns {Object} options
          */
         function modelQuery(options) {
-            return models.Post.edit(options.data.posts.map(convertPageToType)[0], omit(options, ['data']))
+            return models.Post.edit(options.data.posts[0], omit(options, ['data']))
                 .then((model) => {
                     if (!model) {
                         return Promise.reject(new common.errors.NotFoundError({
@@ -219,7 +166,7 @@ posts = {
                     }
 
                     return {
-                        posts: [post].map(convertTypeToPage)
+                        posts: [post]
                     };
                 });
         }
@@ -255,7 +202,7 @@ posts = {
          * @returns {Object} options
          */
         function modelQuery(options) {
-            return models.Post.add(options.data.posts.map(convertPageToType)[0], omit(options, ['data']))
+            return models.Post.add(options.data.posts[0], omit(options, ['data']))
                 .then((model) => {
                     const post = urlsForPost(model.id, model.toJSON(options), options);
 
@@ -264,9 +211,7 @@ posts = {
                         post.statusChanged = true;
                     }
 
-                    return {
-                        posts: [post].map(convertTypeToPage)
-                    };
+                    return {posts: [post]};
                 });
         }
 

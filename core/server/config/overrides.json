@@ -12,7 +12,7 @@
         "internalSchedulingPath": "core/server/adapters/scheduling/",
         "migrationPath": "core/server/data/migrations",
         "publicFilePath": "core/server/public",
-        "readerViews": "core/server/web/reader/views/"
+        "readerViews": "core/server/web/finpub/views/"
     },
     "apps": {
         "internal": [

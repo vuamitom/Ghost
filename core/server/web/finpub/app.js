@@ -1,4 +1,4 @@
-const debug = require('ghost-ignition').debug('web:reader:app');
+const debug = require('ghost-ignition').debug('web:finpub:app');
 const express = require('express');
 const serveStatic = require('express').static;
 const config = require('../../config');

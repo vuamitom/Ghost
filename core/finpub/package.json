@@ -18,8 +18,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.5.5",
     "babel-loader": "^8.0.6",
     "css-loader": "^3.2.0",
     "grunt": "^1.0.4",
@@ -34,7 +35,7 @@
     "webpack": "^4.39.2",
     "webpack-shell-plugin": "^0.5.0"
   },
-  "dependencies": {   
+  "dependencies": {    
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-router-dom": "^5.0.1"
@@ -60,7 +61,8 @@
       "@babel/preset-react"
     ],
     "plugins": [
-      "@babel/plugin-proposal-class-properties"
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-syntax-dynamic-import"
     ]
   }
 }

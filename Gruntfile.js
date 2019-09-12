@@ -287,24 +287,24 @@ const configureGrunt = function (grunt) {
                 },
                 projects: {
                     'core/client': 'init',
-                    'core/reader': 'init'
+                    'core/finpub': 'init'
                 }
             },
 
             dev: {
                 'core/client': 'shell:ember:dev',
-                'core/reader': 'webpack:dev'
+                'core/finpub': 'webpack:dev'
             },
 
             prod: {
                 'core/client': 'shell:ember:prod',
-                'core/reader': 'webpack:prod'
+                'core/finpub': 'webpack:prod'
             },
 
             watch: {
                 projects: {
                     'core/client': ['shell:ember:watch', '--live-reload-base-url="' + urlService.utils.getSubdir() + '/ghost/"'],
-                    'core/reader': ['webpack:dev']
+                    'core/finpub': ['webpack:dev']
                 }
             }
         },

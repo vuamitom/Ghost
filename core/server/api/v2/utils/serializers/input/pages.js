@@ -3,27 +3,6 @@ const debug = require('ghost-ignition').debug('api:v2:utils:serializers:input:pa
 const converters = require('../../../../../lib/mobiledoc/converters');
 const url = require('./utils/url');
 const localUtils = require('../../index');
-const mongo = require('./utils/mongo');
-
-/*
- * Replaces references of "page" in filters
- * with the correct column "type"
- */
-function replacePageWithType(mongoJSON) {
-    return mongo.mapKeysAndValues(mongoJSON, {
-        key: {
-            from: 'page',
-            to: 'type'
-        },
-        values: [{
-            from: false,
-            to: 'post'
-        }, {
-            from: true,
-            to: 'page'
-        }]
-    });
-}
 
 function removeMobiledocFormat(frame) {
     if (frame.options.formats && frame.options.formats.includes('mobiledoc')) {
@@ -76,9 +55,9 @@ function defaultFormat(frame) {
  */
 const forcePageFilter = (frame) => {
     if (frame.options.filter) {
-        frame.options.filter = `(${frame.options.filter})+type:page`;
+        frame.options.filter = `(${frame.options.filter})+page:true`;
     } else {
-        frame.options.filter = 'type:page';
+        frame.options.filter = 'page:true';
     }
 };
 
@@ -106,8 +85,6 @@ module.exports = {
             defaultFormat(frame);
             defaultRelations(frame);
         }
-
-        frame.options.mongoTransformer = replacePageWithType;
 
         debug(frame.options);
     },
@@ -146,7 +123,7 @@ module.exports = {
 
         // @NOTE: force storing page
         if (options.add) {
-            frame.data.pages[0].type = 'page';
+            frame.data.pages[0].page = true;
         }
 
         // CASE: Transform short to long format
@@ -186,7 +163,7 @@ module.exports = {
     destroy(apiConfig, frame) {
         frame.options.destroyBy = {
             id: frame.options.id,
-            type: 'page'
+            page: true
         };
 
         defaultFormat(frame);
