@@ -152,6 +152,9 @@
                 },
                 "plaintext": {
                     "strip": true
+                },
+                "fee": {
+                    "type": ["number", "null"]
                 }
             }
         },

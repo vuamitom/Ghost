@@ -125,3 +125,6 @@ CHANGELOG.md
 /core/server/web/admin/views/*.html
 /core/server/web/reader/views/*.html
 /core/server/public/ghost.min.css
+
+# vim files
+*.swp
