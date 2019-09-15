@@ -9,16 +9,18 @@ module.exports = function (grunt) {
     const MiniCssExtractPlugin = require('mini-css-extract-plugin');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
     const WebpackShellPlugin = require('webpack-shell-plugin');
-    const assetPath = '/reader/assets';
+    const assetPath = '/reader/assets/';
 
 
     const generateWebpackConfig = (isProd) => {
         
         let conf = {
             entry: ['./app/index.js'],
+            name: 'finpub',
             output: {
                 path: path.resolve(__dirname, '..', 'built', 'assets'),
-                filename: 'finpub.js',
+                filename: 'finpub.[chunkhash].js',
+                chunkFilename: 'finpub.[chunkhash].js',
                 publicPath: assetPath            
             },
             mode: isProd? 'production': 'development',
@@ -46,7 +48,7 @@ module.exports = function (grunt) {
             plugins: [
                 new MiniCssExtractPlugin({
                     filename: 'finpub.css',
-                    chunkFilename: 'finpub.[id].css'
+                    chunkFilename: 'finpub.[chunkhash].css'
                 }),
                 new HtmlWebpackPlugin({
                     hash: true,
