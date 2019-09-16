@@ -19,8 +19,8 @@ module.exports = function (grunt) {
             name: 'finpub',
             output: {
                 path: path.resolve(__dirname, '..', 'built', 'assets'),
-                filename: 'finpub.[chunkhash].js',
-                chunkFilename: 'finpub.[chunkhash].js',
+                filename: 'finpub.[name].[chunkhash].js',
+                chunkFilename: 'finpub.[name].[chunkhash].js',
                 publicPath: assetPath            
             },
             mode: isProd? 'production': 'development',
@@ -47,7 +47,7 @@ module.exports = function (grunt) {
             },
             plugins: [
                 new MiniCssExtractPlugin({
-                    filename: 'finpub.css',
+                    filename: 'finpub.[chunkhash].css',
                     chunkFilename: 'finpub.[chunkhash].css'
                 }),
                 new HtmlWebpackPlugin({
