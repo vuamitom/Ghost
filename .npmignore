@@ -35,6 +35,7 @@ core/built/**/*.map
 core/built/**/test-*
 core/built/**/tests-*
 core/client/**
+core/finpub/**
 core/test/**
 CONTRIBUTING.md
 content/themes/casper/SECURITY.md
