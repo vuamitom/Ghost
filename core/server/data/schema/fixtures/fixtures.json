@@ -74,6 +74,10 @@
                 {
                     "name": "Scheduler Integration",
                     "description": "Internal Scheduler Client"
+                },
+                {
+                    "name": "Reader",
+                    "description": "Finpub Readers"
                 }
             ]
         },
