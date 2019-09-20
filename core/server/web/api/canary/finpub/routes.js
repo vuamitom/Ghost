@@ -12,6 +12,7 @@ module.exports = function apiRoutes() {
 
     // ## Posts
     router.post('/readers', mw.authenticatePublic, http(apiCanary.readers.add));
+    router.get('/readers', mw.authenticatePublic, http(apiCanary.readers.read));
     
     return router;
 };

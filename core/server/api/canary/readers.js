@@ -10,18 +10,42 @@ module.exports = {
         statusCode: 201,
         headers: {},
         options: [],
+        permissions: {
+            unsafeAttrs: UNSAFE_ATTRS
+        },
+        query(frame) {
+            debug("Add reader");
+            //TODO: update roles as reader 
+            debug(frame.data.readers);
+            return models.Role.findOne({name: 'Reader'})
+                .then((role) => {
+                        if (!role) { 
+                            throw new common.errors.NotFoundError({
+                                    message: "Reader role not found"
+                                });
+                        }
+                        else {
+                            frame.data.readers[0].roles = [];
+                            frame.data.readers[0].roles.push(role);
+                            return models.User.add(frame.data.readers[0], frame.options);
+                        }
+                    });
+        }
+    },
+    read: {
+        options: [
+        ],
+        data: [
+        ],
         validation: {
-            options: {}
+            options: {
+            }
         },
         permissions: {
             unsafeAttrs: UNSAFE_ATTRS
         },
         query(frame) {
-            //TODO: update roles as reader 
-            return models.User.add(frame.data.readers[0], frame.options)
-                .then((model) => {
-                    return model;
-                });
+            return {};
         }
     }
 };

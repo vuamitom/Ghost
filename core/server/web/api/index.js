@@ -6,7 +6,6 @@ const errorHandler = require('../shared/middlewares/error-handler');
 module.exports = function setupApiApp() {
     debug('Parent API setup start');
     const apiApp = express();
-
     // Mount different API versions
     apiApp.use(urlUtils.getVersionPath({version: 'v0.1'}), require('./v0.1/app')());
     apiApp.use(urlUtils.getVersionPath({version: 'v2', type: 'content'}), require('./v2/content/app')());
@@ -15,7 +14,7 @@ module.exports = function setupApiApp() {
     apiApp.use(urlUtils.getVersionPath({version: 'canary', type: 'content'}), require('./canary/content/app')());
     apiApp.use(urlUtils.getVersionPath({version: 'canary', type: 'admin'}), require('./canary/admin/app')());
     apiApp.use(urlUtils.getVersionPath({version: 'canary', type: 'members'}), require('./canary/members/app')());
-    apiApp.use(urlUtils.getVersionPath({version: 'canary', type: 'finpub'}), require('./canary/finpub/app')());
+    apiApp.use('/canary/finpub/', require('./canary/finpub/app')());
 
     // Error handling for requests to non-existent API versions
     apiApp.use(errorHandler.resourceNotFound);
