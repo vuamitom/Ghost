@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const routes = require('./routes');
 
 module.exports = function setupFinpubApiApp() {
-    debug('Finpub API v2 setup start');
+    debug('Finpub API Canary setup start');
     const apiApp = express();
 
      // Body parsing
