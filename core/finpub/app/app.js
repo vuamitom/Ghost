@@ -36,22 +36,39 @@ function WaitingComponent(Component) {
   );
 }
 
-// function PropRoute({ component: Component, ...rest }) {
-//   return <Route {...rest} render={routeProps => {
-//     return <Component {...routeProps} {...rest}/>;
-//   }}/>
-// }
+function isEmbedded() {
+  return window.self !== window.top;
+}
+
+function getTargetOrigin() {
+  return window.location.protocol + '//' + window.location.hostname;
+}
 
 class App extends Component {
+  onCloseAuth = (e) => {
+    if (window.parent) {
+      window.parent.postMessage('close-auth-popup', getTargetOrigin());
+    }
+  }
+
+  onLoginSuccess = () => {
+    if (window.parent) {
+      window.parent.postMessage('login-success', getTargetOrigin());
+    }
+  }
 
   render() {
+
+    let inIframe = isEmbedded();
+
     return (
       <div className="gh-viewport" >
+        {inIframe? <span className="fp-close-auth" onClick={this.onCloseAuth}><i className="fa fa-times"></i></span> : null}
         <Router basename='/reader' >
           <Switch>
-            <Route path='/login' component={Login} />
+            <Route path='/login' component={Login} onLoginSuccess={inIframe? this.onLoginSuccess: null} />
             <Route path='/signup' component={Signup} />
-            <PrivateRoute path='/' component={WaitingComponent(Main)} />   
+            {inIframe? null: <PrivateRoute path='/' component={WaitingComponent(Main)} />}
           </Switch>
         </Router>
       </div>

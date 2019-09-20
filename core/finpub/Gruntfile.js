@@ -33,7 +33,9 @@ module.exports = function (grunt) {
                     },
                     {
                         test: /\.css$/i,
-                        use: [!isProd? 'style-loader': MiniCssExtractPlugin.loader, 'css-loader'],
+                        use: [!isProd? {
+                            loader: 'style-loader', options: {injectType: 'styleTag'}
+                        }: MiniCssExtractPlugin.loader, 'css-loader'],
                     },
                     {
                         test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
@@ -41,7 +43,7 @@ module.exports = function (grunt) {
                         options: {
                           limit: 8192,
                         },
-                    },
+                    }
                 ],
 
             },

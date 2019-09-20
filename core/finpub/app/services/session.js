@@ -11,7 +11,7 @@ class Session{
     }
 
     fetchUserInfo() {
-        const userApi = GhostPath.url.api('users/me');
+        const userApi = GhostPath.url.api('users', 'me');
         console.log(userApi);
         return http.get(userApi, {include: 'roles'})
                 .then(resp => {

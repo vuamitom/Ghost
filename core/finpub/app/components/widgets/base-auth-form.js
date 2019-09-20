@@ -44,6 +44,11 @@ class BaseAuthForm extends Component {
     }
 
     redirect() {
+        // in case of embeding iframe
+        if (window.parent && this.props.onLoginSucess) {
+            this.props.onLoginSucess();
+            return;
+        }
         // if it is a request from another app
         // kick back
         let queryParam = window.location.search;
@@ -104,6 +109,7 @@ class BaseAuthForm extends Component {
         return <form id='login' className='gh-signin'>
             <div className='form-group success ember-view'>
                 <span className='gh-input-icon gh-icon-mail'>
+                    <i className="fa fa-envelope-o" ariaHidden={true}></i>
                     <input autoFocus="" 
                         name="identification" 
                         autoComplete="username" tabIndex="1" 
@@ -117,6 +123,7 @@ class BaseAuthForm extends Component {
             </div>
             <div className='form-group'>
                 <span className='gh-input-icon gh-icon-lock forgotten-wrap'>
+                <i className="fa fa-lock" ariaHidden={true}></i>
                 <input name="password" autoComplete="current-password" 
                     tabIndex="2" placeholder="Password" 
                     autoCorrect="off"
