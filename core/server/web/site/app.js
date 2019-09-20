@@ -108,6 +108,15 @@ module.exports = function setupSiteApp(options = {}) {
         )
     );
 
+    // /public/finpub-sdk.js
+    siteApp.get('/public/finpub-sdk.js',
+        shared.middlewares.servePublicFile.createPublicFileMiddleware(
+            'public/finpub-sdk.js',
+            'application/javascript',
+            constants.ONE_HOUR_S
+        )
+    );
+
     // Serve sitemap.xsl file
     siteApp.use(shared.middlewares.servePublicFile('sitemap.xsl', 'text/xsl', constants.ONE_DAY_S));
 

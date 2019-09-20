@@ -257,7 +257,8 @@ const configureGrunt = function (grunt) {
                     sourceMap: false
                 },
                 files: {
-                    'core/server/public/ghost-sdk.min.js': 'core/server/public/ghost-sdk.js'
+                    'core/server/public/ghost-sdk.min.js': 'core/server/public/ghost-sdk.js',
+                    'core/server/public/finpub-sdk.min.js': 'core/server/public/finpub-sdk.js'
                 }
             }
         },
