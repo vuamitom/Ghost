@@ -145,5 +145,13 @@ module.exports = {
 
     get authorsPublic() {
         return shared.pipeline(require('./authors-public'), localUtils, 'content');
+    },
+
+    /**
+     * FinPub API Controllers
+     *
+     */
+    get readers() {
+        return shared.pipeline(require('./readers'), localUtils, 'finpub');
     }
 };

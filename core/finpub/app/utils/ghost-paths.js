@@ -17,7 +17,7 @@ let path = window.location.pathname;
 let subdir = path.substr(0, path.search('/reader/'));
 let adminRoot = `${subdir}/ghost/`;
 let assetRoot = `${subdir}/ghost/assets/`;
-let apiRoot = `${subdir}/ghost/api/v2/admin`;
+let apiRoot = `${subdir}/ghost/api/canary/admin`;
 
 function assetUrl(src) {
     return subdir + src;
