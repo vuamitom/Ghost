@@ -14,22 +14,23 @@ module.exports = {
             unsafeAttrs: UNSAFE_ATTRS
         },
         query(frame) {
-            debug("Add reader");
-            //TODO: update roles as reader 
-            debug(frame.data.readers);
+            debug("add");
             return models.Role.findOne({name: 'Reader'})
                 .then((role) => {
                         if (!role) { 
-                            throw new common.errors.NotFoundError({
+                            return Promise.reject(new common.errors.NotFoundError({
                                     message: "Reader role not found"
-                                });
+                                }));
                         }
                         else {
-                            frame.data.readers[0].roles = [];
-                            frame.data.readers[0].roles.push(role);
+                            frame.data.readers[0].roles = [role];
                             return models.User.add(frame.data.readers[0], frame.options);
                         }
-                    });
+                    }).catch((err) => {
+                            return Promise.reject(new common.errors.ValidationError({
+                                        err: err
+                                    }));
+                        });
         }
     },
     read: {
