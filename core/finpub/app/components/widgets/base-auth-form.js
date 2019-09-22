@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Redirect } from "react-router-dom";
 import Session from '../../services/session';
+import Site from '../../services/site';
 import Loading from './loading';
-
+import Utils from '../../utils/common';
 
 class BaseAuthForm extends Component {
     
@@ -14,7 +15,8 @@ class BaseAuthForm extends Component {
             username: '', 
             password: '', 
             fullname: '',
-            error: null 
+            error: null,
+            site: null
         };
         if (state.fetched) {
             state.redirectToReferrer = true;
@@ -40,12 +42,19 @@ class BaseAuthForm extends Component {
                 .catch(e => {
                     this.setState({fetched: true});
                 })
+            if (!this.state.site) {
+                Site.fetch().then(site => {
+                    this.setState({site: site});
+                });
+            }            
         }
+
+
     }
 
     redirect() {
         // in case of embeding iframe
-        if (window.parent && this.props.onLoginSucess) {
+        if (Utils.isEmbedded() && this.props.onLoginSucess) {
             this.props.onLoginSucess();
             return;
         }
@@ -109,7 +118,7 @@ class BaseAuthForm extends Component {
         return <form id='login' className='gh-signin'>
             <div className='form-group success ember-view'>
                 <span className='gh-input-icon gh-icon-mail'>
-                    <i className="fa fa-envelope-o" ariaHidden={true}></i>
+                    <i className="fa fa-envelope-o" ></i>
                     <input autoFocus="" 
                         name="identification" 
                         autoComplete="username" tabIndex="1" 
@@ -123,7 +132,7 @@ class BaseAuthForm extends Component {
             </div>
             <div className='form-group'>
                 <span className='gh-input-icon gh-icon-lock forgotten-wrap'>
-                <i className="fa fa-lock" ariaHidden={true}></i>
+                <i className="fa fa-lock"></i>
                 <input name="password" autoComplete="current-password" 
                     tabIndex="2" placeholder="Password" 
                     autoCorrect="off"
@@ -220,9 +229,16 @@ class BaseAuthForm extends Component {
             <h1>Create Your Account</h1>
         </header>: null;
 
+        let site = this.state.site? <div className="gh-nav-menu" style={{position: 'absolute'}}>
+            <div className="gh-nav-menu-details">
+                <div className="gh-nav-menu-icon" style={{backgroundImage: "url('" + this.state.site.url + "/favicon.ico'"}}></div>
+                <div className="gh-nav-menu-details-blog">{this.state.site.title}</div>
+            </div>
+        </div>: null;
         return <main className='gh-main' role='main'>
+            {site}
             <div className='gh-flow'>
-                <div className='gh-flow-content-wrap'>
+                <div className='gh-flow-content-wrap'>                    
                     <section className='gh-flow-content'>
                         {header}
                         {form}

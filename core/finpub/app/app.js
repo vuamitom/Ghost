@@ -4,6 +4,7 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Session from './services/session';
 import Loading from './components/widgets/loading';
+import Utils from './utils/common';
 
 const Main = lazy(() => import('./components/main'));
 
@@ -36,9 +37,6 @@ function WaitingComponent(Component) {
   );
 }
 
-function isEmbedded() {
-  return window.self !== window.top;
-}
 
 function getTargetOrigin() {
   return window.location.protocol + '//' + window.location.hostname;
@@ -59,7 +57,7 @@ class App extends Component {
 
   render() {
 
-    let inIframe = isEmbedded();
+    let inIframe = Utils.isEmbedded();
 
     return (
       <div className="gh-viewport" >

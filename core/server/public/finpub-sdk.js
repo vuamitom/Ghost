@@ -54,7 +54,7 @@
     }
 
     function register() {
-
+        show('register');
     }
 
     function status(response) {
@@ -70,7 +70,7 @@
     }
 
     function getLoginInfo() {
-        let authApi = '/api/v2/users/me?include=roles';
+        let authApi = '/ghost/api/v2/admin/users/me?include=roles';
         let config = {
             method: 'get',
             headers: {
@@ -80,7 +80,8 @@
         };
         return fetch(authApi, config)
             .then(status)
-            .then(content);
+            .then(content)
+            .then(users => users[0]);
     }
 
 

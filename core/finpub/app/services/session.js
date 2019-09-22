@@ -12,7 +12,7 @@ class Session{
 
     fetchUserInfo() {
         const userApi = GhostPath.url.api('users', 'me');
-        console.log(userApi);
+        // console.log(userApi);
         return http.get(userApi, {include: 'roles'})
                 .then(resp => {
                     let users = resp.users;
