@@ -61,7 +61,9 @@ class App extends Component {
 
     return (
       <div className="gh-viewport" >
-        {inIframe? <span className="fp-close-auth" onClick={this.onCloseAuth}><i className="fa fa-times"></i></span> : null}
+        {inIframe? <span className="fp-close-auth" onClick={this.onCloseAuth}>
+          <i className="fa fa-times"></i>
+        </span> : null}
         <Router basename='/reader' >
           <Switch>
             <Route path='/login' component={Login} onLoginSuccess={inIframe? this.onLoginSuccess: null} />

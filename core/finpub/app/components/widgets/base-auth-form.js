@@ -22,7 +22,7 @@ class BaseAuthForm extends Component {
             state.redirectToReferrer = true;
         }
         this.state = state;
-
+        this.unmounted = false;
     }
 
     componentDidMount() {
@@ -44,12 +44,15 @@ class BaseAuthForm extends Component {
                 })
             if (!this.state.site) {
                 Site.fetch().then(site => {
-                    this.setState({site: site});
+                    if (!this.unmounted)
+                        this.setState({site: site});
                 });
             }            
         }
+    }
 
-
+    componentWillUnmount() {
+        this.unmounted = true;
     }
 
     redirect() {

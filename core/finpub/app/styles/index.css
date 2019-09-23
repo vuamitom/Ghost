@@ -3,6 +3,8 @@
 	top: 20px;
 	right: 20px;
 	z-index: 999;
+	font-size: 25px;
+	color: #ababab;
 }
 
 .gh-input-icon > .fa {
