@@ -10,7 +10,7 @@ class Site {
         if (this.info) {
             return Promise.resolve(this.info);
         }
-        const siteApi = GhostPath.url.api('site');
+        const siteApi = GhostPath.url.adminApi('site');
         return http.get(siteApi)
             .then(resp => {
                 let site = resp.site;
