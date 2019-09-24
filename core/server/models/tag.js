@@ -1,6 +1,10 @@
 const ghostBookshelf = require('./base');
 const CompanyHelper = require('../data/finpub/company');
 
+const TagTypes = {
+    Company: 1
+}
+
 let Tag, Tags;
 
 Tag = ghostBookshelf.Model.extend({
@@ -92,7 +96,6 @@ Tag = ghostBookshelf.Model.extend({
     onCreating: function onCreating(model, attr, options) {
         // overwrite onCreating to automatically add meta_title 
         // and meta_description
-        console.log('----------------------------> on creating tag ', this.get('name'));  
         let company = CompanyHelper.get(this.get('name'));
         if (company) {
 
@@ -106,6 +109,10 @@ Tag = ghostBookshelf.Model.extend({
 
             if (!options.importing || (options.importing && !this.get('description'))) {
                 this.set('description', String(company.name) + ' (' + company.exchange + ')');
+            }
+
+            if (!options.importing || (options.importing && !this.get('kind'))) {
+                this.set('kind', TagTypes.Company);
             }
         }
 

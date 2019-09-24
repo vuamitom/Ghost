@@ -175,7 +175,8 @@ module.exports = {
         created_at: {type: 'dateTime', nullable: false},
         created_by: {type: 'string', maxlength: 24, nullable: false},
         updated_at: {type: 'dateTime', nullable: true},
-        updated_by: {type: 'string', maxlength: 24, nullable: true}
+        updated_by: {type: 'string', maxlength: 24, nullable: true},
+        kind: {type: 'integer', nullable: true, unsigned: true, defaultTo: 0}
     },
     posts_tags: {
         id: {type: 'string', maxlength: 24, nullable: false, primary: true},

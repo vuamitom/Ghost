@@ -12,7 +12,6 @@ delete val;
 
 const CompanyHandler = {
     get: function(code) {
-        console.log('check code ', code, companies[code]);
         if (code) {
             return companies[code.toLowerCase()];
         }
