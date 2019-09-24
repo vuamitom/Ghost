@@ -1,11 +1,13 @@
 (function() {
+    'use strict'
 
-    let authFrame,
+    var authFrame,
         authUrl;
 
-    function loadFrame(src, container = document.body) {
+    function loadFrame(src, container) {
+        container = container? container: document.body;
         return new Promise(function (resolve) {
-            const iframe = document.createElement('iframe');
+            var iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             iframe.src = src;
             iframe.onload = function () {
@@ -24,15 +26,14 @@
     }
 
     function init(siteUrl) {
-        authUrl = `${siteUrl}/reader`;
-        authFrame = loadFrame(authUrl).then(frame => {
-            return frame;
-        });
+        authUrl = siteUrl + '/reader';
+        authFrame = loadFrame(authUrl);
+        return authFrame;
     }
 
     function show(path) {
-        return authFrame.then(frame => {
-            frame.src = `${authUrl}/${path}`;
+        return authFrame.then(function(frame){
+            frame.src = authUrl + '/' + path;
             frame.style.display = 'block';
             window.addEventListener('message', function frameEventListener(event) {
                 if (event.source !== frame.contentWindow) {
@@ -45,7 +46,7 @@
                 frame.style.display = 'none';
                 resolve(!!event.data.success);
             })
-        })
+        });
     }
 
 
@@ -70,8 +71,8 @@
     }
 
     function getLoginInfo() {
-        let authApi = '/ghost/api/v2/admin/users/me?include=roles';
-        let config = {
+        var authApi = '/ghost/api/v2/admin/users/me?include=roles';
+        var config = {
             method: 'get',
             headers: {
                 'Content-type': 'application/json; charset=UTF-8'
@@ -81,7 +82,7 @@
         return fetch(authApi, config)
             .then(status)
             .then(content)
-            .then(users => users[0]);
+            .then(function(users) {return users[0]});
     }
 
 
