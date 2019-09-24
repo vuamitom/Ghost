@@ -1,4 +1,5 @@
 const ghostBookshelf = require('./base');
+const CompanyHelper = require('../data/finpub/company');
 
 let Tag, Tags;
 
@@ -86,6 +87,30 @@ Tag = ghostBookshelf.Model.extend({
             actor_id: actor.id,
             actor_type: actor.type
         };
+    },
+
+    onCreating: function onCreating(model, attr, options) {
+        // overwrite onCreating to automatically add meta_title 
+        // and meta_description
+        console.log('----------------------------> on creating tag ', this.get('name'));  
+        let company = CompanyHelper.get(this.get('name'));
+        if (company) {
+
+            if (!options.importing || (options.importing && !this.get('meta_title'))) {
+                this.set('meta_title', String(company.code + ' - ' + company.name));
+            }
+
+            if (!options.importing || (options.importing && !this.get('meta_description'))) {
+                this.set('meta_description', String(company.name) + ' (' + company.exchange + ')');
+            }
+
+            if (!options.importing || (options.importing && !this.get('description'))) {
+                this.set('description', String(company.name) + ' (' + company.exchange + ')');
+            }
+        }
+
+        // call parent
+        return ghostBookshelf.Model.prototype.onCreating.apply(this, arguments);
     }
 }, {
     orderDefaultOptions: function orderDefaultOptions() {
