@@ -58,6 +58,25 @@ Tag = ghostBookshelf.Model.extend({
                     self.set({slug: slug});
                 });
         }
+
+        let company = CompanyHelper.get(this.get('name'));
+
+        if (company && this.get('kind') !== TagTypes.Company) {
+
+            if (!this.get('meta_title')) {
+                this.set('meta_title', String(company.code + ' - ' + company.name));
+            }
+
+            if (!this.get('meta_description')) {
+                this.set('meta_description', String(company.name) + ' (' + company.exchange + ')');
+            }
+
+            if (!this.get('description')) {
+                this.set('description', String(company.name) + ' (' + company.exchange + ')');
+            }
+
+            this.set('kind', TagTypes.Company);
+        }
     },
 
     posts: function posts() {
@@ -99,19 +118,19 @@ Tag = ghostBookshelf.Model.extend({
         let company = CompanyHelper.get(this.get('name'));
         if (company) {
 
-            if (!options.importing || (options.importing && !this.get('meta_title'))) {
+            if (!this.get('meta_title')) {
                 this.set('meta_title', String(company.code + ' - ' + company.name));
             }
 
-            if (!options.importing || (options.importing && !this.get('meta_description'))) {
+            if (!this.get('meta_description')) {
                 this.set('meta_description', String(company.name) + ' (' + company.exchange + ')');
             }
 
-            if (!options.importing || (options.importing && !this.get('description'))) {
+            if (!this.get('description')) {
                 this.set('description', String(company.name) + ' (' + company.exchange + ')');
             }
 
-            if (!options.importing || (options.importing && !this.get('kind'))) {
+            if (!this.get('kind')) {
                 this.set('kind', TagTypes.Company);
             }
         }
