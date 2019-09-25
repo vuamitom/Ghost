@@ -188,7 +188,7 @@ module.exports = function ghost_head(options) { // eslint-disable-line camelcase
                     head.push(getMembersHelper());
                 }
 
-                if (!_.includes(context, 'amp')) {
+                if (!_.includes(context, 'amp') && false) {
                     head.push(getFinpubHelper());
                 }
             }

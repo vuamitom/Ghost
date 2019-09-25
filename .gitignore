@@ -125,6 +125,7 @@ CHANGELOG.md
 /core/server/web/admin/views/*.html
 /core/server/web/finpub/views/*.html
 /core/server/public/ghost.min.css
+/core/server/public/finpub-sdk.min.js
 
 # vim files
 *.swp
