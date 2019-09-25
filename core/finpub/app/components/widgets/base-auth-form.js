@@ -88,33 +88,50 @@ class BaseAuthForm extends Component {
         this.setState({password: e.target.value});
     }
 
+    _signin_helper = () => {
+        console.log("signing in");
+        Session.authenticate(this.state.username, this.state.password)
+        .then(resp => {
+            if (resp.status === 201) {
+                // session created
+                // fetch user Info
+                Session.fetchUserInfo().then(info => {
+                    if (info) {
+                        // redirect;
+                        this.redirect();
+                    }
+                    else {
+                        this.setState({error: 'Could not get user info'});
+                    }
+                })
+            }
+        })
+        .catch(e => {
+            console.log(e);
+            this.setState({error: e.statusText});
+        });
+    }
+
     signin = (e) => {
         e.stopPropagation();
         e.preventDefault();
-
-        Session.authenticate(this.state.username, this.state.password)
-            .then(resp => {
-                if (resp.status === 201) {
-                    // session created
-                    // fetch user Info
-                    Session.fetchUserInfo().then(info => {
-                        if (info) {
-                            // redirect;
-                            this.redirect();
-                        }
-                        else {
-                            this.setState({error: 'Could not get user info'});
-                        }
-                    })
-                }
-            })
-            .catch(e => {
-                this.setState({error: e.statusText});
-            })
+        this._signin_helper();
     }
 
     signup = (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+        console.log("Sign up");
 
+        Session.createReader(this.state.fullname, this.state.username, this.state.password)
+            .then(resp => {
+                this._signin_helper();
+            })
+            .catch(e => {
+                e.json()
+                    .then((err_json) => { this.setState({error: err_json.errors[0].message}); })
+                    .catch(_ => { this.setState({error: e.statusText}); }); //if fail to pass e as json, just display the status text
+            });
     }
 
     renderSignin() {
@@ -204,7 +221,7 @@ class BaseAuthForm extends Component {
         <button key={'button'} tabIndex="4" className=" gh-btn gh-btn-green gh-btn-block gh-btn-icon ember-view" 
                 onClick={this.signup}
                 type="submit">
-                <span>Create Account</span>
+                <span>Create Account Hehe</span>
         </button>]
     }
 

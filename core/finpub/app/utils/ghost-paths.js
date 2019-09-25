@@ -17,7 +17,9 @@ let path = window.location.pathname;
 let subdir = path.substr(0, path.search('/reader/'));
 let adminRoot = `${subdir}/ghost/`;
 let assetRoot = `${subdir}/ghost/assets/`;
-let apiRoot = `${subdir}/ghost/api/canary/admin`;
+let apiRoot = `${subdir}/ghost/api/canary`;
+let adminApi = `${apiRoot}/admin`;
+let finpubApi = `${apiRoot}/finpub`;
 
 function assetUrl(src) {
     return subdir + src;
@@ -35,8 +37,12 @@ export default {
             return makeRoute(adminRoot, arguments);
         },
 
-        api() {
-            return makeRoute(apiRoot, arguments);
+        adminApi() {
+            return makeRoute(adminApi, arguments);
+        },
+
+        finpubApi(){
+            return makeRoute(finpubApi, arguments);
         },
 
         join() {
