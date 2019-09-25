@@ -7,6 +7,22 @@ const TagTypes = {
 
 let Tag, Tags;
 
+function updateTagMeta(tag) {
+    if (!tag.get('meta_title')) {
+        tag.set('meta_title', String(company.code + ' - ' + company.name));
+    }
+
+    if (!tag.get('meta_description')) {
+        tag.set('meta_description', String(company.name) + ' (' + company.exchange + ')');
+    }
+
+    if (!tag.get('description')) {
+        tag.set('description', 'Những bài phân tích mới nhất tại Finpub về ' + String(company.name) + ' (' + company.exchange + ')');
+    }
+
+    tag.set('kind', TagTypes.Company);
+}
+
 Tag = ghostBookshelf.Model.extend({
 
     tableName: 'tags',
@@ -62,20 +78,7 @@ Tag = ghostBookshelf.Model.extend({
         let company = CompanyHelper.get(this.get('name'));
 
         if (company && this.get('kind') !== TagTypes.Company) {
-
-            if (!this.get('meta_title')) {
-                this.set('meta_title', String(company.code + ' - ' + company.name));
-            }
-
-            if (!this.get('meta_description')) {
-                this.set('meta_description', String(company.name) + ' (' + company.exchange + ')');
-            }
-
-            if (!this.get('description')) {
-                this.set('description', String(company.name) + ' (' + company.exchange + ')');
-            }
-
-            this.set('kind', TagTypes.Company);
+            updateTagMeta(this);
         }
     },
 
@@ -117,22 +120,7 @@ Tag = ghostBookshelf.Model.extend({
         // and meta_description
         let company = CompanyHelper.get(this.get('name'));
         if (company) {
-
-            if (!this.get('meta_title')) {
-                this.set('meta_title', String(company.code + ' - ' + company.name));
-            }
-
-            if (!this.get('meta_description')) {
-                this.set('meta_description', String(company.name) + ' (' + company.exchange + ')');
-            }
-
-            if (!this.get('description')) {
-                this.set('description', String(company.name) + ' (' + company.exchange + ')');
-            }
-
-            if (!this.get('kind')) {
-                this.set('kind', TagTypes.Company);
-            }
+            updateTagMeta(this);
         }
 
         // call parent
