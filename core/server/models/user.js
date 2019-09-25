@@ -672,7 +672,6 @@ User = ghostBookshelf.Model.extend({
         var self = this,
             userModel = userModelOrId,
             origArgs;
-
         // If we passed in a model without its related roles, we need to fetch it again
         if (_.isObject(userModelOrId) && !_.isObject(userModelOrId.related('roles'))) {
             userModelOrId = userModelOrId.id;
@@ -801,6 +800,12 @@ User = ghostBookshelf.Model.extend({
         }
 
         if (hasUserPermission && hasApiKeyPermission && hasAppPermission) {
+            return Promise.resolve();
+        }
+
+        if (action === 'read' && context.user) {
+            // allow reader to access data
+            // TODO: need to verify that the id trying to read is the same as user
             return Promise.resolve();
         }
 
