@@ -8,7 +8,8 @@ module.exports = function (grunt) {
     const path = require('path');
     const MiniCssExtractPlugin = require('mini-css-extract-plugin');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
-    const WebpackShellPlugin = require('webpack-shell-plugin');
+    // const WebpackShellPlugin = require('webpack-shell-plugin');
+    const exec = require('child_process').exec;
     const assetPath = '/reader/assets/';
 
 
@@ -59,9 +60,21 @@ module.exports = function (grunt) {
                     assetPath: assetPath,
                     filename: 'finpub.html' //relative to root of the application
                 }),
-                new WebpackShellPlugin({
-                    onBuildEnd: ['cp ../built/assets/finpub.html ../server/web/finpub/views/' + (isProd ? 'default-prod.html': 'default.html')]
-                })
+                // new WebpackShellPlugin({
+                //     onBuildEnd: ['echo "Copying output finpub.html to default.html" && cp ../built/assets/finpub.html ../server/web/finpub/views/' + (isProd ? 'default-prod.html': 'default.html')]
+                // })
+                {
+                  apply: (compiler) => {
+                    compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {
+                      exec('echo "Copying output finpub.html to default.html" && cp ../built/assets/finpub.html ../server/web/finpub/views/' 
+                                + (isProd ? 'default-prod.html': 'default.html'), 
+                                    (err, stdout, stderr) => {
+                        if (stdout) process.stdout.write(stdout);
+                        if (stderr) process.stderr.write(stderr);
+                      });
+                    });
+                  }
+                }
             ],
             devServer: {
                 writeToDisk: true
