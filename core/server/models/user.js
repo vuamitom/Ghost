@@ -803,9 +803,8 @@ User = ghostBookshelf.Model.extend({
             return Promise.resolve();
         }
 
-        if (action === 'read' && context.user) {
-            // allow reader to access data
-            // TODO: need to verify that the id trying to read is the same as user
+        if (action === 'read' && context.user === unsafeAttrs.id) {
+            // allow reader to access data only if the id is the same as current user
             return Promise.resolve();
         }
 

@@ -51,7 +51,9 @@ module.exports = {
                 }
             }
         },
-        permissions: true,
+        permissions: {
+            unsafeAttrs: ['id']    
+        },
         query(frame) {
             return models.User.findOne(frame.data, frame.options)
                 .then((model) => {
