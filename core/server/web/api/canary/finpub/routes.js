@@ -12,8 +12,8 @@ module.exports = function apiRoutes() {
 
     router.post('/readers', mw.authenticatePublic, http(apiCanary.readers.add));
     //router.get('/readers', mw.authenticatePublic, http(apiCanary.readers.read));
-    router.post('/readers/posts/:id', mw.authenticateReader, http(apiCanary.readers.purchase));
-    router.get('/readers/posts', mw.authenticateReader, http(apiCanary.readers.listpurchases));
+    router.post('/purchases/:id', mw.authenticateReader, http(apiCanary.readers.purchase));
+    router.get('/purchases', mw.authenticateReader, http(apiCanary.readers.listpurchases));
     
     return router;
 };

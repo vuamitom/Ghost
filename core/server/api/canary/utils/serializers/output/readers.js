@@ -55,7 +55,7 @@ module.exports = {
         }
 
         frame.response = {
-            posts: [mapper.mapPost(models, frame)]
+            posts: mapper.mapPost(models, frame)
         };
 
         debug(frame.response);

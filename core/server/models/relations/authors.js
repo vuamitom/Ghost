@@ -332,11 +332,9 @@ module.exports.extendModel = function extendModel(Post, Posts, ghostBookshelf) {
         },
 
         permissible: function permissible(postModelOrId, action, context, unsafeAttrs, loadedPermissions, hasUserPermission, hasAppPermission, hasApiKeyPermission) {
-            console.log("Author permissible", loadedPermissions);
             var self = this,
                 postModel = postModelOrId,
                 origArgs, isContributor, isAuthor, isEdit, isAdd, isDestroy;
-            console.log("Post model", postModelOrId);
 
             // If we passed in an id instead of a model, get the model
             // then check the permissions

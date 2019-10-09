@@ -109,7 +109,6 @@ module.exports = {
             return models.User.findOne({id: frame.options.context.user}, {withRelated: ['permissions']})
                 .then((user) => {
                     let purchasedPostIds = user.related('permissions').toJSON().map((perm) => { return perm.object_id; });
-                    console.log("Purchased posts", purchasedPostIds);
                     
                     // fetch related posts 
                     return models.Posts.query('whereIn', 'id', purchasedPostIds).fetch();

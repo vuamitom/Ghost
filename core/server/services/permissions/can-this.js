@@ -48,7 +48,6 @@ CanThisResult.prototype.buildObjectTypeHandlers = function (objTypes, actType, c
             }
             // Wait for the user loading to finish
             return permissionLoad.then(function (loadedPermissions) {
-                console.log("can-this: loaded permissions: ", loadedPermissions);
                 // Iterate through the user permissions looking for an affirmation
                 var userPermissions = loadedPermissions.user ? loadedPermissions.user.permissions : null,
                     apiKeyPermissions = loadedPermissions.apiKey ? loadedPermissions.apiKey.permissions : null,
@@ -79,7 +78,6 @@ CanThisResult.prototype.buildObjectTypeHandlers = function (objTypes, actType, c
                         return modelId === permObjId;
                     };
 
-                console.log("users permissions", userPermissions);
                 if (loadedPermissions.user && _.some(loadedPermissions.user.roles, {name: 'Owner'})) {
                     hasUserPermission = true;
                 } else if (!_.isEmpty(userPermissions)) {
@@ -102,7 +100,6 @@ CanThisResult.prototype.buildObjectTypeHandlers = function (objTypes, actType, c
 
                 // Offer a chance for the TargetModel to override the results
                 if (TargetModel && _.isFunction(TargetModel.permissible)) {
-                    console.log("can this calling model permissible function");
                     return TargetModel.permissible(
                         modelId, actType, context, unsafeAttrs, loadedPermissions, hasUserPermission, hasAppPermission, hasApiKeyPermission
                     );
