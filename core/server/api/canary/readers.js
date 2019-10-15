@@ -2,7 +2,7 @@ const models = require('../../models');
 const common = require('../../lib/common');
 const urlUtils = require('../../lib/url-utils');
 const UNSAFE_ATTRS = ['status', 'roles'];
-const debug = require('ghost-ignition').debug('api:canary:utils:serializers:input:users');
+const debug = require('ghost-ignition').debug('api:canary:readers');
 
 module.exports = {
     docName: 'readers',

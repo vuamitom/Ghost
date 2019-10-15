@@ -85,13 +85,34 @@
             .then(function(users) {return users[0]});
     }
 
+    function getPaymentUrl(amount) {
+        var payload = {amount: amount}
+        var paymentApi = 'ghost/api/canary/finpub/payments/';
+        var config = {
+            method: 'post',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            credentials: 'include'
+        };
+
+        return fetch(paymentApi, config)
+                .then(status)
+                .then(content)
+                .then(function(res) {
+                    console.log('res===>', res);
+                })
+    }
+
 
     if (typeof window !== 'undefined') {
         window.finpub = window.finpub || {
             init: init,
             signin: signin,
             register: register,
-            getLoginInfo: getLoginInfo
+            getLoginInfo: getLoginInfo,
+            getPaymentUrl: getPaymentUrl
         };
 
         if (window.onFinpubReady) {
@@ -99,9 +120,4 @@
         }
     }
 
-    // if (typeof module !== 'undefined') {
-    //     module.exports = {
-    //         sigin: sigin
-    //     }; 
-    // }
 })();

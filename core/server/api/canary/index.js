@@ -153,5 +153,9 @@ module.exports = {
      */
     get readers() {
         return shared.pipeline(require('./readers'), localUtils, 'finpub');
+    },
+
+    get payments() {
+        return shared.pipeline(require('./payments'), localUtils, 'finpub');
     }
 };
