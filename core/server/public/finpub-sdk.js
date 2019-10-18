@@ -59,15 +59,20 @@
     }
 
     function status(response) {
-        if (response.status >= 200 && response.status < 300) {
-            return Promise.resolve(response)
-        } else {
-            return Promise.reject(response)
+        if (response.status !== undefined) {
+            if (response.status >= 200 && response.status < 300) {
+                return Promise.resolve(response)
+            } else {
+                return Promise.reject(response)
+            }
+        }
+        else {
+            return response;
         }
     }
 
     function content(response) {
-        return response.json();
+        return response.json === undefined? response: response.json();
     }
 
     function getLoginInfo() {
@@ -82,7 +87,10 @@
         return fetch(authApi, config)
             .then(status)
             .then(content)
-            .then(function(users) {return users[0]});
+            .then(function(resp) {
+                var users = resp.users? resp.users: resp;
+                return users[0]
+            });
     }
 
     function getPaymentUrl(amount) {
