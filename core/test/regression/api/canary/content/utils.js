@@ -20,13 +20,14 @@ const expectedProperties = {
         // and always returns computed properties: url, primary_tag, primary_author
         .concat('url', 'primary_tag', 'primary_author')
         // canary API doesn't return unused fields
-        .without('locale', 'visibility')
+        .without('locale')
         // These fields aren't useful as they always have known values
         .without('status')
         // @TODO: https://github.com/TryGhost/Ghost/issues/10335
         // .without('page')
         // canary returns a calculated excerpt field
         .concat('excerpt')
+        .concat('reading_time')
     ,
     author: _(schema.users)
         .keys()
