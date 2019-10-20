@@ -45,13 +45,13 @@ function getTargetOrigin() {
 class App extends Component {
   onCloseAuth = (e) => {
     if (window.parent) {
-      window.parent.postMessage('close-auth-popup', getTargetOrigin());
+      window.parent.postMessage({msg: 'close-auth-popup'}, getTargetOrigin());
     }
   }
 
-  onLoginSuccess = () => {
+  onLoginSuccess = (userInfo) => {
     if (window.parent) {
-      window.parent.postMessage('login-success', getTargetOrigin());
+      window.parent.postMessage({msg: 'login-success', success: true, user: userInfo}, getTargetOrigin());
     }
   }
 
@@ -66,7 +66,7 @@ class App extends Component {
         </span> : null}
         <Router basename='/reader' >
           <Switch>
-            <Route path='/login' component={Login} onLoginSuccess={inIframe? this.onLoginSuccess: null} />
+            <Route path='/login' render={(props) => <Login {...props} onLoginSuccess={inIframe? this.onLoginSuccess: null} />} />
             <Route path='/signup' component={Signup} />
             {inIframe? null: <PrivateRoute path='/' component={WaitingComponent(Main)} />}
           </Switch>

@@ -31,7 +31,7 @@ class BaseAuthForm extends Component {
                 .then(userInfo => {
                     // if already login, redirect
                     if (userInfo) {
-                        this.redirect();
+                        this.redirect(userInfo);
                     }
                     else {
                         // show login
@@ -55,10 +55,10 @@ class BaseAuthForm extends Component {
         this.unmounted = true;
     }
 
-    redirect() {
+    redirect(userInfo) {
         // in case of embeding iframe
-        if (Utils.isEmbedded() && this.props.onLoginSucess) {
-            this.props.onLoginSucess();
+        if (Utils.isEmbedded() && this.props.onLoginSuccess) {
+            this.props.onLoginSuccess(userInfo);
             return;
         }
         // if it is a request from another app
@@ -98,7 +98,7 @@ class BaseAuthForm extends Component {
                 Session.fetchUserInfo().then(info => {
                     if (info) {
                         // redirect;
-                        this.redirect();
+                        this.redirect(info);
                     }
                     else {
                         this.setState({error: 'Could not get user info'});

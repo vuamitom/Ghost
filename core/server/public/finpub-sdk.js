@@ -31,7 +31,7 @@
         return authFrame;
     }
 
-    function show(path) {
+    function show(path, callback) {
         return authFrame.then(function(frame){
             frame.src = authUrl + '/' + path;
             frame.style.display = 'block';
@@ -39,23 +39,44 @@
                 if (event.source !== frame.contentWindow) {
                     return;
                 }
-                if (!event.data || event.data.msg !== 'close-auth-popup') {
+                if (!event.data) {
                     return;
                 }
                 window.removeEventListener('message', frameEventListener);
                 frame.style.display = 'none';
-                resolve(!!event.data.success);
+                if (callback) {
+                    if (event.data.msg === 'login-success') {
+                        callback(event.data.user);
+                    }
+                    else if (event.data.msg === 'close-auth-popup') {
+                        callback(false);
+                    }
+                }
             })
         });
     }
 
 
     function signin(callback) {
-        show('login');
+        show('login', callback);
     }
 
-    function register() {
-        show('register');
+    function register(callback) {
+        show('register', callback);
+    }
+
+    function signout() {
+        var sessionApi = '/ghost/api/canary/admin/session';
+        var config = {
+            method: 'delete',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            credentials: 'include'
+        };
+        return fetch(sessionApi, config)
+                .then(status)
+                .then(content);
     }
 
     function status(response) {
@@ -118,6 +139,7 @@
         window.finpub = window.finpub || {
             init: init,
             signin: signin,
+            signout: signout,
             register: register,
             getLoginInfo: getLoginInfo,
             getPaymentUrl: getPaymentUrl
