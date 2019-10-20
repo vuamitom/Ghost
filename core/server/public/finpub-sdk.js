@@ -2,9 +2,15 @@
     'use strict'
 
     var authFrame,
-        authUrl;
+        authUrl,
+        fetchFn = window.nativeFetch? window.nativeFetch: fetch;
 
     function loadFrame(src, container) {
+        if (authFrame) {
+            console.warn('auth frame has been loaded');
+            return authFrame;
+        }
+
         container = container? container: document.body;
         return new Promise(function (resolve) {
             var iframe = document.createElement('iframe');
@@ -65,7 +71,7 @@
         show('register', callback);
     }
 
-    function signout() {
+    function signout(callback) {
         var sessionApi = '/ghost/api/canary/admin/session';
         var config = {
             method: 'delete',
@@ -74,9 +80,12 @@
             },
             credentials: 'include'
         };
-        return fetch(sessionApi, config)
+        var r = fetchFn(sessionApi, config)
                 .then(status)
-                .then(content);
+        if (callback)
+            r = r.then(callback);
+        return r;
+
     }
 
     function status(response) {
@@ -105,7 +114,7 @@
             },
             credentials: 'include'
         };
-        return fetch(authApi, config)
+        return fetchFn(authApi, config)
             .then(status)
             .then(content)
             .then(function(resp) {
@@ -126,7 +135,7 @@
             credentials: 'include'
         };
 
-        return fetch(paymentApi, config)
+        return fetchFn(paymentApi, config)
                 .then(status)
                 .then(content)
                 .then(function(res) {

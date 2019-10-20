@@ -39,7 +39,7 @@ function WaitingComponent(Component) {
 
 
 function getTargetOrigin() {
-  return window.location.protocol + '//' + window.location.hostname;
+  return window.location.protocol + '//' + window.location.hostname + (window.location.port? (':' + window.location.port): '');
 }
 
 class App extends Component {
