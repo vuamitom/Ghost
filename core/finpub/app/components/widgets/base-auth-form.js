@@ -168,7 +168,7 @@ class BaseAuthForm extends Component {
             <button tabIndex="3" className="login gh-btn gh-btn-blue gh-btn-block gh-btn-icon ember-view" 
                 onClick={this.signin}
                 type="submit">
-                <span>Sign In</span>
+                <span>Đăng nhập</span>
             </button>
         </form>;
     }
