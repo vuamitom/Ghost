@@ -31,15 +31,16 @@
         });
     }
 
-    function init(siteUrl) {
-        authUrl = siteUrl + '/reader';
+    function init() {
+        authUrl = window.location.origin + '/reader';
         authFrame = loadFrame(authUrl);
         return authFrame;
     }
 
     function show(path, callback) {
         return authFrame.then(function(frame){
-            frame.src = authUrl + '/' + path;
+            if (!frame.src || frame.src.indexOf(path) < 0)
+                frame.src = authUrl + '/' + path;
             frame.style.display = 'block';
             window.addEventListener('message', function frameEventListener(event) {
                 if (event.source !== frame.contentWindow) {
@@ -68,7 +69,7 @@
     }
 
     function register(callback) {
-        show('register', callback);
+        show('signup', callback);
     }
 
     function signout(callback) {

@@ -61,7 +61,7 @@ class App extends Component {
 
     return (
       <div className={"gh-viewport " +  (inIframe? 'embedded': '')} >
-        {inIframe? <span className="fp-close-auth" onClick={this.onCloseAuth}>
+        {inIframe? <span className="fp-close-auth fp-clickable" onClick={this.onCloseAuth}>
           <i className="fa fa-times"></i>
         </span> : null}
         <Router basename='/reader' >
