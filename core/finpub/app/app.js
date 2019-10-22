@@ -60,7 +60,7 @@ class App extends Component {
     let inIframe = Utils.isEmbedded();
 
     return (
-      <div className="gh-viewport" >
+      <div className={"gh-viewport " +  (inIframe? 'embedded': '')} >
         {inIframe? <span className="fp-close-auth" onClick={this.onCloseAuth}>
           <i className="fa fa-times"></i>
         </span> : null}

@@ -134,8 +134,22 @@ class BaseAuthForm extends Component {
             });
     }
 
+    goToSignup = (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+
+        this.setState({redirectToReferrer: "/signup" });
+    }
+
+    goToSignin = (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+
+        this.setState({redirectToReferrer: "/login" });
+    }
+
     renderSignin() {
-        return <form id='login' className='gh-signin'>
+        return <form id='login' className={'gh-signin ' + (Utils.isEmbedded()? 'embedded': '')}>
             <div className='form-group success ember-view'>
                 <span className='gh-input-icon gh-icon-mail'>
                     <i className="fa fa-envelope-o" ></i>
@@ -174,7 +188,7 @@ class BaseAuthForm extends Component {
     }
 
     renderSignup() {
-        return [<form key={'form'} id='signup' className='gh-flow-create'>
+        return [<form key={'form'} id='signup' className={'gh-flow-create ' + (Utils.isEmbedded()? 'embedded': '')}>
             <div className='form-group success ember-view'>
                 <label htmlFor='name'>Họ Tên</label>
                 <span className='gh-input-icon gh-icon-user'>
@@ -232,10 +246,13 @@ class BaseAuthForm extends Component {
         let { signup } = this.props;
 
         if (this.state.redirectToReferrer) {
-
-            let { from } = this.props.location.state || { from: { pathname: "/" } };
-            return <Redirect to={from} />;
-            
+            if (this.state.redirectToReferrer === true) {
+                let { from } = this.props.location.state || { from: { pathname: "/" } };
+                return <Redirect to={from} />;
+            }
+            else {
+                return <Redirect to={this.state.redirectToReferrer} />;
+            }            
         }
         
         if (!this.state.fetched) {
@@ -251,10 +268,10 @@ class BaseAuthForm extends Component {
         let form = signup? this.renderSignup(): this.renderSignin();
         let header = signup? <header>
             <h1>Đăng Ký</h1>
-            <span>Hoặc <a href="/reader/login">đăng nhập</a> nếu đã có tài khoản</span>
+            <span>Hoặc <a className="fp-clickable" onClick={this.goToSignin}>đăng nhập</a> nếu đã có tài khoản</span>
         </header>: <header>
             <h1>Đăng Nhập</h1>
-            <span>Hoặc <a href="/reader/signup">đăng ký</a> nếu chưa có tài khoản</span>
+            <span>Hoặc <a className="fp-clickable" onClick={this.goToSignup}>đăng ký</a> nếu chưa có tài khoản</span>
         </header>;
 
         let site = this.state.site? <div className="gh-nav-menu" style={{position: 'absolute'}}>
@@ -263,11 +280,11 @@ class BaseAuthForm extends Component {
                 <div className="gh-nav-menu-details-blog">{this.state.site.title}</div>
             </div>
         </div>: null;
-        return <main className='gh-main' role='main'>
+        return <main className={'gh-main '+ (Utils.isEmbedded() ? 'embedded': '')} role='main'>
             {site}
             <div className='gh-flow'>
                 <div className='gh-flow-content-wrap'>                    
-                    <section className='gh-flow-content'>
+                    <section className={'gh-flow-content ' + (Utils.isEmbedded() ? 'embedded': '') + (signup? ' signup': ' signin')}>
                         {header}
                         {form}
                         {error}                        
