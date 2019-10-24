@@ -3,7 +3,8 @@
 
     var authFrame,
         authUrl,
-        fetchFn = window.nativeFetch? window.nativeFetch: fetch;
+        fetchFn = window.nativeFetch? window.nativeFetch: fetch,
+        USER='fp_user';
 
     function loadFrame(src, container) {
         if (authFrame) {
@@ -37,6 +38,29 @@
         return authFrame;
     }
 
+    function saveUser(user) {
+        window.sessionStorage.setItem(USER, JSON.stringify(user));
+    }
+
+    function getUser() {
+        try {
+            var user = JSON.parse(window.sessionStorage.getItem(USER));
+            if (user && user.id)
+                return user;
+        }
+        catch(e) {
+            console.error(e);
+        }
+        // may be due to malformed key
+        // just remove it 
+        removeUser();
+        return null;
+    }
+
+    function removeUser() {
+        window.sessionStorage.removeItem(USER);
+    }
+
     function show(path, callback) {
         return authFrame.then(function(frame){
             if (!frame.src || frame.src.indexOf(path) < 0)
@@ -53,6 +77,8 @@
                 frame.style.display = 'none';
                 if (callback) {
                     if (event.data.msg === 'login-success') {
+                        // user login success 
+                        saveUser(event.data.user);
                         callback(event.data.user);
                     }
                     else if (event.data.msg === 'close-auth-popup') {
@@ -81,6 +107,8 @@
             },
             credentials: 'include'
         };
+
+        removeUser(); // remove session cache;
         var r = fetchFn(sessionApi, config)
                 .then(status)
         if (callback)
@@ -106,7 +134,14 @@
         return response.json === undefined? response: response.json();
     }
 
-    function getLoginInfo() {
+    function getLoginInfo(bypassCache) {
+        if (!bypassCache) {
+            var currentUser = getUser();
+            if (currentUser) {
+                return Promise.resolve(currentUser);
+            }
+        }
+
         var authApi = '/ghost/api/v2/admin/users/me?include=roles';
         var config = {
             method: 'get',
@@ -120,7 +155,12 @@
             .then(content)
             .then(function(resp) {
                 var users = resp.users? resp.users: resp;
-                return users[0]
+                var result = users[0]
+                if (result && result.id) {
+                    // login successfully
+                    saveUser(result);
+                }
+                return result;
             });
     }
 
@@ -152,7 +192,8 @@
             signout: signout,
             register: register,
             getLoginInfo: getLoginInfo,
-            getPaymentUrl: getPaymentUrl
+            getPaymentUrl: getPaymentUrl,
+            currentUser: getUser
         };
 
         if (window.onFinpubReady) {
