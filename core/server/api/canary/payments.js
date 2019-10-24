@@ -13,7 +13,7 @@ module.exports = {
         permissions: true,
         query(frame) {
             var returnUrl = "https://momo.vn/return"
-            var notifyUrl = "https://callback.url/notify"
+            var notifyUrl = "https://finpub.vn/notify"
             var orderInfo = "pay with MoMo"
             var orderId = uuidv1()
             var requestId = uuidv1()

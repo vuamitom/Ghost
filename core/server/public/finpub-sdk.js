@@ -165,6 +165,10 @@
     }
 
     function getPaymentUrl(amount) {
+        if (!amount) {
+            return Promise.reject({error: 'Must specify amount'});
+        }
+        
         var payload = {amount: amount}
         var paymentApi = 'ghost/api/canary/finpub/payments/';
         var config = {
