@@ -26,11 +26,12 @@ module.exports = {
                             frame.data.readers[0].roles = [role];
                             return models.User.add(frame.data.readers[0], frame.options);
                         }
-                    }).catch((err) => {
-                            return Promise.reject(new common.errors.ValidationError({
-                                        err: err
-                                    }));
-                        });
+                    })
+                // .catch((err) => {
+                //             return Promise.reject(new common.errors.ValidationError({
+                //                         err: err
+                //                     }));
+                //         });
         }
     },
     read: {

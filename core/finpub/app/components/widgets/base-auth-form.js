@@ -129,7 +129,10 @@ class BaseAuthForm extends Component {
             })
             .catch(e => {
                 e.json()
-                    .then((err_json) => { this.setState({error: err_json.errors[0].message}); })
+                    .then((err_json) => { 
+                        let err = err_json.errors[0];
+                        this.setState({error: err.context || err.message}); 
+                    })
                     .catch(_ => { this.setState({error: e.statusText}); }); //if fail to pass e as json, just display the status text
             });
     }
