@@ -110,4 +110,8 @@ module.exports = {
     get readers() {
         return require('./readers');
     },
+
+    get payments() {
+        return require('./payments');
+    }
 };

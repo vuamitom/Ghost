@@ -3,7 +3,7 @@ const baseUtils = require('../../models/base/utils');
 const common = require('../../lib/common');
 const urlUtils = require('../../lib/url-utils');
 const UNSAFE_ATTRS = ['status', 'roles'];
-const debug = require('ghost-ignition').debug('api:canary:utils:serializers:input:users');
+const debug = require('ghost-ignition').debug('api:canary:readers');
 
 module.exports = {
     docName: 'readers',
@@ -27,11 +27,12 @@ module.exports = {
                             frame.data.readers[0].roles = [role];
                             return models.User.add(frame.data.readers[0], frame.options);
                         }
-                    }).catch((err) => {
-                            return Promise.reject(new common.errors.ValidationError({
-                                        err: err
-                                    }));
-                        });
+                    })
+                // .catch((err) => {
+                //             return Promise.reject(new common.errors.ValidationError({
+                //                         err: err
+                //                     }));
+                //         });
         }
     },
     //read: {

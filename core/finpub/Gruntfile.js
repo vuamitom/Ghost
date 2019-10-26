@@ -2,6 +2,10 @@
 /* eslint-disable object-shorthand */
 'use strict';
 
+function getProdGhostCss() {
+    // TODO
+}
+
 module.exports = function (grunt) {
     // Find all of the task which start with `grunt-` and load them, rather than explicitly declaring them all
     require('matchdep').filterDev(['grunt-*', '!grunt-cli']).forEach(grunt.loadNpmTasks);
@@ -58,6 +62,7 @@ module.exports = function (grunt) {
                     template: './public/index.html',
                     title: 'Finpub Reader',
                     assetPath: assetPath,
+                    ghostCss: isProd? 'ghost.min-0f6e3adabe5e69b6b5056e2502989ad7.css': 'ghost.css',
                     filename: 'finpub.html' //relative to root of the application
                 }),
                 // new WebpackShellPlugin({

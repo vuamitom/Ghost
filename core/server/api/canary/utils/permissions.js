@@ -25,7 +25,12 @@ const nonePublicAuth = (apiConfig, frame) => {
     if (apiConfig.identifier) {
         permissionIdentifier = apiConfig.identifier(frame);
     }
-    const unsafeAttrObject = apiConfig.unsafeAttrs && _.has(frame, `data.[${apiConfig.docName}][0]`) ? _.pick(frame.data[apiConfig.docName][0], apiConfig.unsafeAttrs) : _.pick(frame.data, apiConfig.unsafeAttrs);
+    // this pickup the unsafe attribute values from frame.data["users"] , if not exists, try to pickup the attributes from frame.data
+    let unsafeAttrObject = apiConfig.unsafeAttrs && _.has(frame, `data.[${apiConfig.docName}][0]`) ? _.pick(frame.data[apiConfig.docName][0], apiConfig.unsafeAttrs) : _.pick(frame.data, apiConfig.unsafeAttrs);
+
+    if (apiConfig.unsafeAttrsObject) {
+        unsafeAttrObject = apiConfig.unsafeAttrsObject(frame);
+    }
 
     let permsPromise;
     // special permissions for reader api . We can consider add this to the permissions db

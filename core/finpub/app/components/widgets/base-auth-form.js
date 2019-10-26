@@ -31,7 +31,7 @@ class BaseAuthForm extends Component {
                 .then(userInfo => {
                     // if already login, redirect
                     if (userInfo) {
-                        this.redirect();
+                        this.redirect(userInfo);
                     }
                     else {
                         // show login
@@ -55,10 +55,10 @@ class BaseAuthForm extends Component {
         this.unmounted = true;
     }
 
-    redirect() {
+    redirect(userInfo) {
         // in case of embeding iframe
-        if (Utils.isEmbedded() && this.props.onLoginSucess) {
-            this.props.onLoginSucess();
+        if (Utils.isEmbedded() && this.props.onLoginSuccess) {
+            this.props.onLoginSuccess(userInfo);
             return;
         }
         // if it is a request from another app
@@ -98,7 +98,7 @@ class BaseAuthForm extends Component {
                 Session.fetchUserInfo().then(info => {
                     if (info) {
                         // redirect;
-                        this.redirect();
+                        this.redirect(info);
                     }
                     else {
                         this.setState({error: 'Could not get user info'});
@@ -129,13 +129,30 @@ class BaseAuthForm extends Component {
             })
             .catch(e => {
                 e.json()
-                    .then((err_json) => { this.setState({error: err_json.errors[0].message}); })
+                    .then((err_json) => { 
+                        let err = err_json.errors[0];
+                        this.setState({error: err.context || err.message}); 
+                    })
                     .catch(_ => { this.setState({error: e.statusText}); }); //if fail to pass e as json, just display the status text
             });
     }
 
+    goToSignup = (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+
+        this.setState({redirectToReferrer: "/signup" });
+    }
+
+    goToSignin = (e) => {
+        e.stopPropagation();
+        e.preventDefault()
+
+        this.setState({redirectToReferrer: "/login" });
+    }
+
     renderSignin() {
-        return <form id='login' className='gh-signin'>
+        return <form id='login' className={'gh-signin ' + (Utils.isEmbedded()? 'embedded': '')}>
             <div className='form-group success ember-view'>
                 <span className='gh-input-icon gh-icon-mail'>
                     <i className="fa fa-envelope-o" ></i>
@@ -168,20 +185,21 @@ class BaseAuthForm extends Component {
             <button tabIndex="3" className="login gh-btn gh-btn-blue gh-btn-block gh-btn-icon ember-view" 
                 onClick={this.signin}
                 type="submit">
-                <span>Sign In</span>
+                <span>Đăng nhập</span>
             </button>
         </form>;
     }
 
     renderSignup() {
-        return [<form key={'form'} id='signup' className='gh-flow-create'>
+        return [<form key={'form'} id='signup' className={'gh-flow-create ' + (Utils.isEmbedded()? 'embedded': '')}>
             <div className='form-group success ember-view'>
-                <label htmlFor='name'>Full name</label>
+                <label htmlFor='name'>Họ Tên</label>
                 <span className='gh-input-icon gh-icon-user'>
+                    <i className="fa fa-user-o"></i>
                     <input autoFocus=""  
                         name="name" 
                         autoComplete="name" tabIndex="1" 
-                        placeholder="Eg. John H. Watson" 
+                        placeholder="Eg. Thành Công" 
                         value={this.state.fullname}
                         onChange={this.fullnameChanged}
                         autoCorrect="off" autoCapitalize="off" 
@@ -192,11 +210,12 @@ class BaseAuthForm extends Component {
             <div className='form-group success ember-view'>
                 <label htmlFor='identification'>Email</label>
                 <span className='gh-input-icon gh-icon-mail'>
+                    <i className="fa fa-envelope-o" ></i>
                     <input autoFocus="" 
                         name="identification" 
                         autoComplete="username" 
                         tabIndex="2" 
-                        placeholder="Email Address" 
+                        placeholder="Địa chỉ email" 
                         value={this.state.username}
                         onChange={this.usernameChanged}
                         autoCorrect="off" autoCapitalize="off" 
@@ -205,9 +224,9 @@ class BaseAuthForm extends Component {
                 </span>
             </div>
             <div className='form-group'>
-                <label htmlFor='password'>Password</label>
+                <label htmlFor='password'>Mật khẩu</label>
                 <span className='gh-input-icon gh-icon-lock'>
-
+                    <i className="fa fa-lock"></i>
                     <input name="password" autoComplete="current-password" 
                         tabIndex="3" placeholder="Password" 
                         autoCorrect="off"
@@ -221,7 +240,7 @@ class BaseAuthForm extends Component {
         <button key={'button'} tabIndex="4" className=" gh-btn gh-btn-green gh-btn-block gh-btn-icon ember-view" 
                 onClick={this.signup}
                 type="submit">
-                <span>Create Account Hehe</span>
+                <span>Tạo tài khoản</span>
         </button>]
     }
 
@@ -230,8 +249,13 @@ class BaseAuthForm extends Component {
         let { signup } = this.props;
 
         if (this.state.redirectToReferrer) {
-            let { from } = this.props.location.state || { from: { pathname: "/" } };
-            return <Redirect to={from} />;
+            if (this.state.redirectToReferrer === true) {
+                let { from } = this.props.location.state || { from: { pathname: "/" } };
+                return <Redirect to={from} />;
+            }
+            else {
+                return <Redirect to={this.state.redirectToReferrer} />;
+            }            
         }
         
         if (!this.state.fetched) {
@@ -246,8 +270,12 @@ class BaseAuthForm extends Component {
 
         let form = signup? this.renderSignup(): this.renderSignin();
         let header = signup? <header>
-            <h1>Create Your Account</h1>
-        </header>: null;
+            <h1>Đăng Ký</h1>
+            <span>Hoặc <a className="fp-clickable" onClick={this.goToSignin}>đăng nhập</a> nếu đã có tài khoản</span>
+        </header>: <header>
+            <h1>Đăng Nhập</h1>
+            <span>Hoặc <a className="fp-clickable" onClick={this.goToSignup}>đăng ký</a> nếu chưa có tài khoản</span>
+        </header>;
 
         let site = this.state.site? <div className="gh-nav-menu" style={{position: 'absolute'}}>
             <div className="gh-nav-menu-details">
@@ -255,11 +283,11 @@ class BaseAuthForm extends Component {
                 <div className="gh-nav-menu-details-blog">{this.state.site.title}</div>
             </div>
         </div>: null;
-        return <main className='gh-main' role='main'>
+        return <main className={'gh-main '+ (Utils.isEmbedded() ? 'embedded': '')} role='main'>
             {site}
             <div className='gh-flow'>
                 <div className='gh-flow-content-wrap'>                    
-                    <section className='gh-flow-content'>
+                    <section className={'gh-flow-content ' + (Utils.isEmbedded() ? 'embedded': '') + (signup? ' signup': ' signin')}>
                         {header}
                         {form}
                         {error}                        

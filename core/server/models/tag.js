@@ -7,7 +7,7 @@ const TagTypes = {
 
 let Tag, Tags;
 
-function updateTagMeta(tag) {
+function updateTagMeta(tag, company) {
     if (!tag.get('meta_title')) {
         tag.set('meta_title', String(company.code + ' - ' + company.name));
     }
@@ -78,7 +78,7 @@ Tag = ghostBookshelf.Model.extend({
         let company = CompanyHelper.get(this.get('name'));
 
         if (company && this.get('kind') !== TagTypes.Company) {
-            updateTagMeta(this);
+            updateTagMeta(this, company);
         }
     },
 
@@ -120,7 +120,7 @@ Tag = ghostBookshelf.Model.extend({
         // and meta_description
         let company = CompanyHelper.get(this.get('name'));
         if (company) {
-            updateTagMeta(this);
+            updateTagMeta(this, company);
         }
 
         // call parent

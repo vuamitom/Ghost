@@ -192,6 +192,7 @@ User = ghostBookshelf.Model.extend({
                 passwordValidation = validation.validatePassword(this.get('password'), this.get('email'));
 
                 if (!passwordValidation.isValid) {
+                    
                     return Promise.reject(new common.errors.ValidationError({
                         message: passwordValidation.message
                     }));

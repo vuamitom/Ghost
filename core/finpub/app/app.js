@@ -39,19 +39,19 @@ function WaitingComponent(Component) {
 
 
 function getTargetOrigin() {
-  return window.location.protocol + '//' + window.location.hostname;
+  return window.location.protocol + '//' + window.location.hostname + (window.location.port? (':' + window.location.port): '');
 }
 
 class App extends Component {
   onCloseAuth = (e) => {
     if (window.parent) {
-      window.parent.postMessage('close-auth-popup', getTargetOrigin());
+      window.parent.postMessage({msg: 'close-auth-popup'}, getTargetOrigin());
     }
   }
 
-  onLoginSuccess = () => {
+  onLoginSuccess = (userInfo) => {
     if (window.parent) {
-      window.parent.postMessage('login-success', getTargetOrigin());
+      window.parent.postMessage({msg: 'login-success', success: true, user: userInfo}, getTargetOrigin());
     }
   }
 
@@ -60,13 +60,13 @@ class App extends Component {
     let inIframe = Utils.isEmbedded();
 
     return (
-      <div className="gh-viewport" >
-        {inIframe? <span className="fp-close-auth" onClick={this.onCloseAuth}>
+      <div className={"gh-viewport " +  (inIframe? 'embedded': '')} >
+        {inIframe? <span className="fp-close-auth fp-clickable" onClick={this.onCloseAuth}>
           <i className="fa fa-times"></i>
         </span> : null}
         <Router basename='/reader' >
           <Switch>
-            <Route path='/login' component={Login} onLoginSuccess={inIframe? this.onLoginSuccess: null} />
+            <Route path='/login' render={(props) => <Login {...props} onLoginSuccess={inIframe? this.onLoginSuccess: null} />} />
             <Route path='/signup' component={Signup} />
             {inIframe? null: <PrivateRoute path='/' component={WaitingComponent(Main)} />}
           </Switch>
