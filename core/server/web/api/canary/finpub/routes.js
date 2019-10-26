@@ -10,10 +10,10 @@ module.exports = function apiRoutes() {
 
     const http = apiCanary.http;
 
-    // ## Posts
     router.post('/readers', mw.authenticatePublic, http(apiCanary.readers.add));
-    router.get('/readers', mw.authenticatePublic, http(apiCanary.readers.read));
-
+    //router.get('/readers', mw.authenticatePublic, http(apiCanary.readers.read));
+    router.post('/purchases/:id', mw.authenticateReader, http(apiCanary.readers.purchase));
+    router.get('/purchases', mw.authenticateReader, http(apiCanary.readers.listpurchases));
     // Payment
     router.post('/payments', mw.authenticatePublic, http(apiCanary.payments.payWithMomo));
     

@@ -18,3 +18,12 @@ module.exports.authenticatePublic = [
     shared.middlewares.urlRedirects.adminRedirect,
     shared.middlewares.prettyUrls
 ];
+
+module.exports.authenticateReader = [
+    auth.authenticate.authenticateAdminApi,
+    auth.authorize.authorizeAdminApi,
+    shared.middlewares.updateUserLastSeen,
+    shared.middlewares.api.cors,
+    shared.middlewares.urlRedirects.adminRedirect,
+    shared.middlewares.prettyUrls
+];
