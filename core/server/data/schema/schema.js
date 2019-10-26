@@ -58,7 +58,8 @@ module.exports = {
         twitter_description: {type: 'string', maxlength: 500, nullable: true},
         custom_template: {type: 'string', maxlength: 100, nullable: true},
         canonical_url: {type: 'text', maxlength: 2000, nullable: true},
-        fee: {type: 'float', precision: 3, nullable: true}
+        fee: {type: 'float', precision: 3, nullable: true},
+        code: {type: 'string', maxLength: 10, nullable: true}
     },
     users: {
         id: {type: 'string', maxlength: 24, nullable: false, primary: true},

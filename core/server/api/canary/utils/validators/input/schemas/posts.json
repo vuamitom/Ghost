@@ -155,6 +155,10 @@
                 },
                 "fee": {
                     "type": ["number", "null"]
+                },
+                "code": {
+                    "type": ["string", "null"],
+                    "maxLength": 10
                 }
             }
         },
