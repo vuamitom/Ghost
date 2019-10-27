@@ -29,8 +29,8 @@ class Main extends Component {
         <main className='gh-main' key={'main'}>
             <section className='gh-canvas'>
                 <Switch>
-                    <Route path={`${match.path}/profile`} component={Profile}/>
-                    <Route path={`${match.path}/purchases`} component={Purchases} />
+                    <Route path={`${match.path}profile`} component={Profile}/>
+                    <Route path={`${match.path}purchases`} component={Purchases} />
                 </Switch>
             </section>
         </main>];
