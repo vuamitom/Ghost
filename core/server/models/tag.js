@@ -1,6 +1,27 @@
 const ghostBookshelf = require('./base');
+const CompanyHelper = require('../data/finpub/company');
+
+const TagTypes = {
+    Company: 1
+}
 
 let Tag, Tags;
+
+function updateTagMeta(tag, company) {
+    if (!tag.get('meta_title')) {
+        tag.set('meta_title', String(company.code + ' - ' + company.name));
+    }
+
+    if (!tag.get('meta_description')) {
+        tag.set('meta_description', String(company.name) + ' (' + company.exchange + ')');
+    }
+
+    if (!tag.get('description')) {
+        tag.set('description', 'Những bài phân tích mới nhất tại Finpub về ' + String(company.name) + ' (' + company.exchange + ')');
+    }
+
+    tag.set('kind', TagTypes.Company);
+}
 
 Tag = ghostBookshelf.Model.extend({
 
@@ -53,6 +74,12 @@ Tag = ghostBookshelf.Model.extend({
                     self.set({slug: slug});
                 });
         }
+
+        let company = CompanyHelper.get(this.get('name'));
+
+        if (company && this.get('kind') !== TagTypes.Company) {
+            updateTagMeta(this, company);
+        }
     },
 
     posts: function posts() {
@@ -86,6 +113,18 @@ Tag = ghostBookshelf.Model.extend({
             actor_id: actor.id,
             actor_type: actor.type
         };
+    },
+
+    onCreating: function onCreating(model, attr, options) {
+        // overwrite onCreating to automatically add meta_title 
+        // and meta_description
+        let company = CompanyHelper.get(this.get('name'));
+        if (company) {
+            updateTagMeta(this, company);
+        }
+
+        // call parent
+        return ghostBookshelf.Model.prototype.onCreating.apply(this, arguments);
     }
 }, {
     orderDefaultOptions: function orderDefaultOptions() {

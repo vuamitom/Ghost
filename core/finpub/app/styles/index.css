@@ -1,0 +1,67 @@
+.fp-close-auth {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	z-index: 999;
+	font-size: 25px;
+	color: #ababab;
+}
+
+.gh-input-icon > .fa {
+	position: absolute;	
+	z-index: 2;	
+	color: #a6b4ba;
+}
+
+.gh-input-icon > .fa-envelope-o {
+	top: 30%;
+	left: 9px;
+	font-size: 14px;
+}
+
+.gh-input-icon > .fa-lock {
+	top: 30%;
+	left: 12px;
+	font-size: 15px;
+}
+
+.gh-input-icon > .fa-user-o {
+	top: 30%;
+	left: 12px;
+	font-size: 15px;
+}
+.fp-clickable {
+	cursor: pointer;
+}
+
+body {
+	background-color: #f2f4f7de;
+}
+
+.gh-flow-content.signin.embedded, .gh-flow-content.signup.embedded {
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 0 1px rgba(0,0,0,.05), 0 20px 45px -10px rgba(0,0,0,.1);
+	padding-top: 30px;
+}
+
+.gh-flow-content.signup.embedded {
+	padding-bottom: 50px;
+}
+
+.gh-signin.embedded {
+	padding: 20px;
+	background-color: none;
+	box-shadow: none;
+}
+.gh-flow-create.embedded {
+	padding: 0px;
+	background: none;
+	box-shadow: none;
+	border: none;
+	margin: 25px auto 0px;
+}
+
+.gh-main.embedded {
+	background: none;
+}

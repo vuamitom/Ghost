@@ -62,6 +62,10 @@ function getMembersHelper() {
     `;
 }
 
+function getFinpubHelper() {
+    return `<script defer src="${getAssetUrl('public/finpub-sdk.js')}"></script>`
+}
+
 /**
  * **NOTE**
  * Express adds `_locals`, see https://github.com/expressjs/express/blob/4.15.4/lib/response.js#L962.
@@ -182,6 +186,10 @@ module.exports = function ghost_head(options) { // eslint-disable-line camelcase
 
                 if (!_.includes(context, 'amp') && labs.isSet('members')) {
                     head.push(getMembersHelper());
+                }
+
+                if (!_.includes(context, 'amp')) {
+                    head.push(getFinpubHelper());
                 }
             }
 

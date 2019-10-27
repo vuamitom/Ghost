@@ -2,13 +2,18 @@
 /* eslint-disable object-shorthand */
 'use strict';
 
+function getProdGhostCss() {
+    // TODO
+}
+
 module.exports = function (grunt) {
     // Find all of the task which start with `grunt-` and load them, rather than explicitly declaring them all
     require('matchdep').filterDev(['grunt-*', '!grunt-cli']).forEach(grunt.loadNpmTasks);
     const path = require('path');
     const MiniCssExtractPlugin = require('mini-css-extract-plugin');
     const HtmlWebpackPlugin = require('html-webpack-plugin');
-    const WebpackShellPlugin = require('webpack-shell-plugin');
+    // const WebpackShellPlugin = require('webpack-shell-plugin');
+    const exec = require('child_process').exec;
     const assetPath = '/reader/assets/';
 
 
@@ -33,7 +38,9 @@ module.exports = function (grunt) {
                     },
                     {
                         test: /\.css$/i,
-                        use: [!isProd? 'style-loader': MiniCssExtractPlugin.loader, 'css-loader'],
+                        use: [!isProd? {
+                            loader: 'style-loader', options: {injectType: 'styleTag'}
+                        }: MiniCssExtractPlugin.loader, 'css-loader'],
                     },
                     {
                         test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)$/i,
@@ -41,7 +48,7 @@ module.exports = function (grunt) {
                         options: {
                           limit: 8192,
                         },
-                    },
+                    }
                 ],
 
             },
@@ -55,11 +62,24 @@ module.exports = function (grunt) {
                     template: './public/index.html',
                     title: 'Finpub Reader',
                     assetPath: assetPath,
+                    ghostCss: isProd? 'ghost.min-0f6e3adabe5e69b6b5056e2502989ad7.css': 'ghost.css',
                     filename: 'finpub.html' //relative to root of the application
                 }),
-                new WebpackShellPlugin({
-                    onBuildEnd: ['cp ../built/assets/finpub.html ../server/web/finpub/views/' + (isProd ? 'default-prod.html': 'default.html')]
-                })
+                // new WebpackShellPlugin({
+                //     onBuildEnd: ['echo "Copying output finpub.html to default.html" && cp ../built/assets/finpub.html ../server/web/finpub/views/' + (isProd ? 'default-prod.html': 'default.html')]
+                // })
+                {
+                  apply: (compiler) => {
+                    compiler.hooks.afterEmit.tap('AfterEmitPlugin', (compilation) => {
+                      exec('echo "Copying output finpub.html to default.html" && cp ../built/assets/finpub.html ../server/web/finpub/views/' 
+                                + (isProd ? 'default-prod.html': 'default.html'), 
+                                    (err, stdout, stderr) => {
+                        if (stdout) process.stdout.write(stdout);
+                        if (stderr) process.stderr.write(stderr);
+                      });
+                    });
+                  }
+                }
             ],
             devServer: {
                 writeToDisk: true

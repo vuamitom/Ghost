@@ -4,6 +4,7 @@ import Login from './components/login';
 import Signup from './components/signup';
 import Session from './services/session';
 import Loading from './components/widgets/loading';
+import Utils from './utils/common';
 
 const Main = lazy(() => import('./components/main'));
 
@@ -36,22 +37,38 @@ function WaitingComponent(Component) {
   );
 }
 
-// function PropRoute({ component: Component, ...rest }) {
-//   return <Route {...rest} render={routeProps => {
-//     return <Component {...routeProps} {...rest}/>;
-//   }}/>
-// }
+
+function getTargetOrigin() {
+  return window.location.protocol + '//' + window.location.hostname + (window.location.port? (':' + window.location.port): '');
+}
 
 class App extends Component {
+  onCloseAuth = (e) => {
+    if (window.parent) {
+      window.parent.postMessage({msg: 'close-auth-popup'}, getTargetOrigin());
+    }
+  }
+
+  onLoginSuccess = (userInfo) => {
+    if (window.parent) {
+      window.parent.postMessage({msg: 'login-success', success: true, user: userInfo}, getTargetOrigin());
+    }
+  }
 
   render() {
+
+    let inIframe = Utils.isEmbedded();
+
     return (
-      <div className="gh-viewport" >
+      <div className={"gh-viewport " +  (inIframe? 'embedded': '')} >
+        {inIframe? <span className="fp-close-auth fp-clickable" onClick={this.onCloseAuth}>
+          <i className="fa fa-times"></i>
+        </span> : null}
         <Router basename='/reader' >
           <Switch>
-            <Route path='/login' component={Login} />
+            <Route path='/login' render={(props) => <Login {...props} onLoginSuccess={inIframe? this.onLoginSuccess: null} />} />
             <Route path='/signup' component={Signup} />
-            <PrivateRoute path='/' component={WaitingComponent(Main)} />   
+            {inIframe? null: <PrivateRoute path='/' component={WaitingComponent(Main)} />}
           </Switch>
         </Router>
       </div>

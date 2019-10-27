@@ -11,8 +11,8 @@ class Session{
     }
 
     fetchUserInfo() {
-        const userApi = GhostPath.url.api('users/me');
-        console.log(userApi);
+        const userApi = GhostPath.url.adminApi('users', 'me');
+        // console.log(userApi);
         return http.get(userApi, {include: 'roles'})
                 .then(resp => {
                     let users = resp.users;
@@ -25,8 +25,13 @@ class Session{
     }
 
     authenticate(username, password) {
-        const sessionApi = GhostPath.url.api('session');
+        const sessionApi = GhostPath.url.adminApi('session');
         return http.post(sessionApi, {username: username, password: password});
+    }
+
+    createReader(fullname, username, password) {
+        const readerApi = GhostPath.url.finpubApi('readers');
+        return http.post(readerApi, {readers: [{name: fullname, email: username, password: password}]});
     }
 
 }

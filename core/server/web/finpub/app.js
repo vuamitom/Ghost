@@ -5,6 +5,7 @@ const config = require('../../config');
 const constants = require('../../lib/constants');
 const urlUtils = require('../../lib/url-utils');
 const shared = require('../shared');
+const common = require('../../lib/common');
 // const readerMiddleware = require('./middleware');
 
 module.exports = function setupReaderApp() {    
@@ -13,11 +14,32 @@ module.exports = function setupReaderApp() {
 
     // Admin assets
     // @TODO ensure this gets a local 404 error handler
-    const configMaxAge = config.get('caching:admin:maxAge');
+    const configMaxAge = config.get('caching:admin:maxAge');    
+
     readerApp.use('/assets', serveStatic(
         config.get('paths').clientAssets,
         {maxAge: (configMaxAge || configMaxAge === 0) ? configMaxAge : constants.ONE_YEAR_MS, fallthrough: false}
     ));
+
+    readerApp.get('/momo', async function (req, res) {
+        // returnUrl?{your_parameters}&partnerCode=$partnerCode&accessKey=$accessKey
+        // &requestId=$requestId&amount=$amount&orderId=orderId
+        // &orderInfo=$orderInfo&orderType=momo_wallet&transId=$transId&message=$message
+        // &localMessage=$localMessage&responseTime=$responseTime&errorCode=$errorCode
+        // &payType=$payType&extraData=$extraData&signature=$signature
+        console.log('momo redirect ', req.query);
+        res.writeHead(200);
+        res.end('momo');
+        // try {
+        //     const token = await membersService.ssr.getIdentityTokenForMemberFromSession(req, res);
+        //     res.writeHead(200);
+        //     res.end(token);
+        // } catch (err) {
+        //     common.logging.warn(err.message);
+        //     res.writeHead(err.statusCode);
+        //     res.end(err.message);
+        // }
+    });
 
     // // Service Worker for offline support
     // readerApp.get(/^\/(sw.js|sw-registration.js)$/, require('./serviceworker'));

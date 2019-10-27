@@ -20,6 +20,7 @@ function content(response) {
     // }
     return Promise.resolve(response);
 }
+
 const http = {
     get: function(url, data, opts) {
         let config = {

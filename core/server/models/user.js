@@ -192,6 +192,7 @@ User = ghostBookshelf.Model.extend({
                 passwordValidation = validation.validatePassword(this.get('password'), this.get('email'));
 
                 if (!passwordValidation.isValid) {
+                    
                     return Promise.reject(new common.errors.ValidationError({
                         message: passwordValidation.message
                     }));
@@ -672,7 +673,6 @@ User = ghostBookshelf.Model.extend({
         var self = this,
             userModel = userModelOrId,
             origArgs;
-
         // If we passed in a model without its related roles, we need to fetch it again
         if (_.isObject(userModelOrId) && !_.isObject(userModelOrId.related('roles'))) {
             userModelOrId = userModelOrId.id;
@@ -801,6 +801,11 @@ User = ghostBookshelf.Model.extend({
         }
 
         if (hasUserPermission && hasApiKeyPermission && hasAppPermission) {
+            return Promise.resolve();
+        }
+
+        if (action === 'read' && context.user === unsafeAttrs.id) {
+            // allow reader to access data only if the id is the same as current user
             return Promise.resolve();
         }
 

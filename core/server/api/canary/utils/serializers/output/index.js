@@ -105,5 +105,13 @@ module.exports = {
 
     get site() {
         return require('./site');
+    },
+
+    get readers() {
+        return require('./readers');
+    },
+
+    get payments() {
+        return require('./payments');
     }
 };
