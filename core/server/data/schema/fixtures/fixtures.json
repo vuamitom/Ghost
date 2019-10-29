@@ -699,6 +699,10 @@
                     "client": "all",
                     "subscriber": ["add"],
                     "theme": ["browse"]
+                },
+                "Reader": {
+                    "post": ["read"],
+                    "user": ["read"]
                 }
             }
         },

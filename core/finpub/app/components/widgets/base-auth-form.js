@@ -55,10 +55,16 @@ class BaseAuthForm extends Component {
         this.unmounted = true;
     }
 
+    onLoginSuccess(userInfo) {
+        if (window.parent) {
+          window.parent.postMessage({msg: 'login-success', success: true, user: userInfo}, Utils.getTargetOrigin());
+        }
+    }
+
     redirect(userInfo) {
         // in case of embeding iframe
-        if (Utils.isEmbedded() && this.props.onLoginSuccess) {
-            this.props.onLoginSuccess(userInfo);
+        if (Utils.isEmbedded()) {
+            this.onLoginSuccess(userInfo);
             return;
         }
         // if it is a request from another app

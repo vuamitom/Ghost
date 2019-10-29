@@ -37,27 +37,17 @@ function WaitingComponent(Component) {
   );
 }
 
-
-function getTargetOrigin() {
-  return window.location.protocol + '//' + window.location.hostname + (window.location.port? (':' + window.location.port): '');
-}
-
 class App extends Component {
   onCloseAuth = (e) => {
     if (window.parent) {
-      window.parent.postMessage({msg: 'close-auth-popup'}, getTargetOrigin());
-    }
-  }
-
-  onLoginSuccess = (userInfo) => {
-    if (window.parent) {
-      window.parent.postMessage({msg: 'login-success', success: true, user: userInfo}, getTargetOrigin());
+      window.parent.postMessage({msg: 'close-auth-popup'}, Utils.getTargetOrigin());
     }
   }
 
   render() {
 
     let inIframe = Utils.isEmbedded();
+    // <Route path='/login' render={(props) => <Login {...props} onLoginSuccess={inIframe? this.onLoginSuccess: null} />} />
 
     return (
       <div className={"gh-viewport " +  (inIframe? 'embedded': '')} >
@@ -66,7 +56,7 @@ class App extends Component {
         </span> : null}
         <Router basename='/reader' >
           <Switch>
-            <Route path='/login' render={(props) => <Login {...props} onLoginSuccess={inIframe? this.onLoginSuccess: null} />} />
+            <Route path='/login' component={Login} />
             <Route path='/signup' component={Signup} />
             {inIframe? null: <PrivateRoute path='/' component={WaitingComponent(Main)} />}
           </Switch>
