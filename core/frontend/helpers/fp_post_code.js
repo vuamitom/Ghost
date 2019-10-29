@@ -1,5 +1,5 @@
 // # FinPub Post Code Helper
-// Usage: `{{post_code}}`
+// Usage: `{{fp_post_code}}`
 //
 // Output product code for the post if any
 var proxy = require('./proxy'),
@@ -10,6 +10,7 @@ const urlService = proxy.urlService;
 const templates = proxy.templates;
 
 module.exports = function tags(options) {
+    // console.log('options ', options.data, options.data.context)
     options = options || {};
     options.hash = options.hash || {};
 
