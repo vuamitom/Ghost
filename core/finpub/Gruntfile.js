@@ -62,7 +62,7 @@ module.exports = function (grunt) {
                     template: './public/index.html',
                     title: 'Finpub Reader',
                     assetPath: assetPath,
-                    ghostCss: isProd? 'ghost.min-0f6e3adabe5e69b6b5056e2502989ad7.css': 'ghost.css',
+                    ghostCss: isProd? 'ghost.min-c4e0057f46b262e4edcf840522559848.css': 'ghost.css',
                     filename: 'finpub.html' //relative to root of the application
                 }),
                 // new WebpackShellPlugin({
