@@ -4,6 +4,7 @@ const common = require('../../lib/common');
 const urlUtils = require('../../lib/url-utils');
 const UNSAFE_ATTRS = ['status', 'roles'];
 const debug = require('ghost-ignition').debug('api:canary:readers');
+const membersService = require('../../services/members');
 
 module.exports = {
     docName: 'readers',
@@ -25,32 +26,21 @@ module.exports = {
                         }
                         else {
                             frame.data.readers[0].roles = [role];
-                            return models.User.add(frame.data.readers[0], frame.options);
+                            // create an equivalent member record 
+                            // consider it a best effort thing
+                            // that means, do not stop even if it failed. 
+                            membersService.api.members.create({
+                                email: frame.data.readers[0].email, 
+                                name: frame.data.readers[0].name, 
+                                note: 'auto'
+                            }); 
+                            return models.User.add(frame.data.readers[0], frame.options);                                    
+
                         }
-                    })
-                // .catch((err) => {
-                //             return Promise.reject(new common.errors.ValidationError({
-                //                         err: err
-                //                     }));
-                //         });
+                    });
         }
     },
-    //read: {
-        //options: [
-        //],
-        //data: [
-        //],
-        //validation: {
-            //options: {
-            //}
-        //},
-        //permissions: {
-            //unsafeAttrs: UNSAFE_ATTRS
-        //},
-        //query(frame) {
-            //return {};
-        //}
-    //},
+
     purchase: {
         data: [
             'id'
