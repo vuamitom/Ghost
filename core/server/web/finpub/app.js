@@ -6,7 +6,33 @@ const constants = require('../../lib/constants');
 const urlUtils = require('../../lib/url-utils');
 const shared = require('../shared');
 const common = require('../../lib/common');
+const membersService = require('../../services/members');
+const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 // const readerMiddleware = require('./middleware');
+
+function setupTempMember() {
+    const tempApp = express();
+     // Body parsing
+    tempApp.use(bodyParser.json({limit: '1mb'}));
+    tempApp.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
+
+    tempApp.post('/signup',  async function (req, res, next) {
+
+        const token = jwt.sign({}, membersService.api.secret, {
+            algorithm: 'HS256',
+            subject: req.body.email,
+            expiresIn: '10m'
+        });
+        // check if member need to be created
+        // if done, create session
+        req.url = req.url + '?token=' + token;
+        const member = await membersService.ssr.exchangeTokenForSession(req, res);
+        next()
+    });
+    return tempApp;
+}
+
 
 module.exports = function setupReaderApp() {    
     debug('Reader setup start');
@@ -20,6 +46,12 @@ module.exports = function setupReaderApp() {
         config.get('paths').clientAssets,
         {maxAge: (configMaxAge || configMaxAge === 0) ? configMaxAge : constants.ONE_YEAR_MS, fallthrough: false}
     ));
+
+
+    // TODO: this is temporary and will be remove later 
+    // just generate session for whatever email 
+    // user input 
+    readerApp.use('/members', setupTempMember());
 
     readerApp.get('/momo', async function (req, res) {
         // returnUrl?{your_parameters}&partnerCode=$partnerCode&accessKey=$accessKey
@@ -41,15 +73,6 @@ module.exports = function setupReaderApp() {
         // }
     });
 
-    // // Service Worker for offline support
-    // readerApp.get(/^\/(sw.js|sw-registration.js)$/, require('./serviceworker'));
-
-    // // Ember CLI's live-reload script
-    // if (config.get('env') === 'development') {
-    //     readerApp.get('/ember-cli-live-reload.js', function emberLiveReload(req, res) {
-    //         res.redirect(`http://localhost:4200${urlUtils.getSubdir()}/ghost/ember-cli-live-reload.js`);
-    //     });
-    // }
 
     // Render error page in case of maintenance
     readerApp.use(shared.middlewares.maintenance);

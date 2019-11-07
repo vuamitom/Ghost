@@ -320,5 +320,7 @@ function createApiInstance() {
         logger: common.logging
     });
 
+    // TODO: remove this later 
+    membersApiInstance.secret = getAuthSecret();
     return membersApiInstance;
 }
