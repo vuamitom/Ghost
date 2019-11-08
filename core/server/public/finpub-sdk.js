@@ -1,6 +1,7 @@
 (function() {
     'use strict'
 
+    /*
     var authFrame,
         authUrl,
         fetchFn = window.nativeFetch? window.nativeFetch: fetch,
@@ -204,5 +205,73 @@
             window.onFinpubReady(window.finpub);
         }
     }
+    */
+    // var fetchFn = window.nativeFetch? window.nativeFetch: fetch;
+
+    function signup(email) {
+        var sessionApi = '/reader/members/signup';
+        var config = {
+            method: 'post',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            },
+            credentials: 'include',
+            body: JSON.stringify({email: email, emailType: 'signup'})
+        };
+        var r = fetch(sessionApi, config);
+        return r;
+    }
+    window.finpub = window.finpub || {
+        signup: signup
+    };
+
+    Array.prototype.forEach.call(document.querySelectorAll('form[data-fp-members-form]'), function (form){
+        var errorEl = form.querySelector('[data-members-error]');
+        function submitHandler(event) {
+            form.removeEventListener('submit', submitHandler);
+            event.preventDefault();
+            if (errorEl) {
+                errorEl.innerText = '';
+            }
+            form.classList.remove('success', 'invalid', 'error');
+            var input = event.target.querySelector('input[data-members-email]');
+            var email = input.value;
+            var emailType = undefined;
+
+            if (form.dataset.membersForm) {
+                emailType = form.dataset.membersForm;
+            }
+
+            if (!email.includes('@')) {
+                form.classList.add('invalid')
+                form.addEventListener('submit', submitHandler);
+                return;
+            }
+
+            form.classList.add('loading');
+
+            signup(email).then(function (res) {
+                form.addEventListener('submit', submitHandler);
+                form.classList.remove('loading');
+                console.info(res);
+                if (res.ok) {
+                    form.classList.add('success')
+                    var hash = window.location.href.indexOf('#')
+                    if (hash >= 0) {
+                        window.location.href = window.location.href.substring(0, hash);
+                    } 
+                    else {
+                        window.location.reload();
+                    }
+                } else {
+                    if (errorEl) {
+                        errorEl.innerText = 'There was an error sending the email, please try again';
+                    }
+                    form.classList.add('error')
+                }
+            });
+        }
+        form.addEventListener('submit', submitHandler);
+    });
 
 })();

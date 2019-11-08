@@ -17,8 +17,12 @@ function setupTempMember() {
     tempApp.use(bodyParser.json({limit: '1mb'}));
     tempApp.use(bodyParser.urlencoded({extended: true, limit: '1mb'}));
 
-    tempApp.post('/signup',  async function (req, res, next) {
-
+    tempApp.post('/signup',  async function (req, res) {
+        const email = req.body.email;
+        if (!email) {
+            res.writeHead(400);
+            return res.end('Bad Request.');
+        }
         const token = jwt.sign({}, membersService.api.secret, {
             algorithm: 'HS256',
             subject: req.body.email,
@@ -27,9 +31,27 @@ function setupTempMember() {
         // check if member need to be created
         // if done, create session
         req.url = req.url + '?token=' + token;
-        const member = await membersService.ssr.exchangeTokenForSession(req, res);
-        next()
+
+        try {
+            const member = await membersService.ssr.exchangeTokenForSession(req, res);
+            res.setHeader('Content-Type', 'application/json');
+            res.writeHead(200);            
+            return res.end(JSON.stringify({ ok: true })); 
+        }
+        catch (errs) {
+            let err = errs[0];
+            if (err.errorType === 'ValidationError') {
+                res.writeHead(400);
+                return res.end('Bad Request.');
+            }
+
+            res.writeHead(500);
+            return res.end('Internal Server Error.');
+        }
     });
+    // tempApp.delete('/signout', async function (req, res) {
+
+    // });
     return tempApp;
 }
 
