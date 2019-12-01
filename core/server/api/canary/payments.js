@@ -15,8 +15,6 @@ module.exports = {
         data: [],
         permissions: true,
         query(frame) {
-            var returnUrl = "https://momo.vn/return";
-            var notifyUrl = "https://webhook.site/1ffca205-7b7e-4ba0-903c-c83686ac4a9e";
             var orderInfo = "pay with MoMo";
             var orderId = uuidv1()
             var requestId = uuidv1()
@@ -29,7 +27,7 @@ module.exports = {
             return models.Post.findOne({id: post_id}, {require: true})
             .then((post) => {
                 return momo.payWithMomo(amount, post_id, reader_id, 
-                                        orderId, requestId, returnUrl, notifyUrl, orderInfo);
+                                        orderId, requestId, orderInfo);
             });
         }
     },

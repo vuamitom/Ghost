@@ -85,5 +85,10 @@
                 "members": "v2/members"
             }
         }
+    },
+    "payment": {
+        "momoUrl": "test-payment.momo.vn",
+        "returnUrl": "http://localhost:2368/reader/purchases/",
+        "notifyUrl": "https://webhook.site/1ffca205-7b7e-4ba0-903c-c83686ac4a9e"
     }
 }

@@ -1,10 +1,11 @@
 const crypto = require('crypto');
 const https = require('https');
 const common = require('../../lib/common')
+const config = require('../../config')
 const momo = {
 
     payWithMomo: function(amount, postId, userId, 
-                          orderId, requestId, returnUrl, notifyUrl, orderInfo) {
+                          orderId, requestId, orderInfo) {
         //parameters send to MoMo get get payUrl
         // var endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor"
         // var hostname = "https://test-payment.momo.vn"
@@ -13,8 +14,8 @@ const momo = {
         var accessKey = "F8BBA842ECF85"
         var serectkey = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
         var orderInfo = orderInfo;
-        var returnUrl = returnUrl;
-        var notifyurl = notifyUrl;
+        var returnUrl = config.get('payment').returnUrl;
+        var notifyurl = config.get('payment').notifyUrl;
         var amount = "" + amount;
         var orderId = orderId
         var requestId = requestId
@@ -43,8 +44,9 @@ const momo = {
             signature : signature,
         })
         //Create the HTTPS objects
+        let momoUrl = config.get('payment').momoUrl;
         var options = {
-          hostname: 'test-payment.momo.vn',
+          hostname: momoUrl,
           port: 443,
           path: '/gw_payment/transactionProcessor',
           method: 'POST',
