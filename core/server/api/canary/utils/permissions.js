@@ -34,7 +34,7 @@ const nonePublicAuth = (apiConfig, frame) => {
 
     let permsPromise;
     // special permissions for reader api . We can consider add this to the permissions db
-    if ((apiConfig.method === 'purchase' || apiConfig.method === 'listpurchases') && singular === 'reader')
+    if ((apiConfig.method === 'payWithMomo' && singular === 'payment') || (apiConfig.method === 'listpurchases' && singular === 'reader'))
         permsPromise = Promise.resolve();
     else
         permsPromise = permissions.canThis(frame.options.context)[apiConfig.method][singular](permissionIdentifier, unsafeAttrObject);

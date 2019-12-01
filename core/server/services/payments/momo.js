@@ -3,7 +3,8 @@ const https = require('https');
 const common = require('../../lib/common')
 const momo = {
 
-    payWithMomo: function(amount, orderId, requestId, returnUrl, notifyUrl, orderInfo) {
+    payWithMomo: function(amount, postId, userId, 
+                          orderId, requestId, returnUrl, notifyUrl, orderInfo) {
         //parameters send to MoMo get get payUrl
         // var endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor"
         // var hostname = "https://test-payment.momo.vn"
@@ -18,8 +19,7 @@ const momo = {
         var orderId = orderId
         var requestId = requestId
         var requestType = "captureMoMoWallet"
-        var extraData = "merchantName=;merchantId=" //pass empty value if your merchant does not have stores else merchantName=[storeName]; merchantId=[storeId] to identify a transaction map with a physical store
-
+        var extraData = "postId=" + postId + ";userId=" + userId
         //before sign HMAC SHA256 with format
         //partnerCode=$partnerCode&accessKey=$accessKey&requestId=$requestId&amount=$amount&orderId=$oderId&orderInfo=$orderInfo&returnUrl=$returnUrl&notifyUrl=$notifyUrl&extraData=$extraData
         var rawSignature = "partnerCode="+partnerCode+"&accessKey="+accessKey+"&requestId="+requestId+"&amount="+amount+"&orderId="+orderId+"&orderInfo="+orderInfo+"&returnUrl="+returnUrl+"&notifyUrl="+notifyurl+"&extraData="+extraData
@@ -72,20 +72,28 @@ const momo = {
                 res.on('end', () => {
 
                     if (data.length) {
-                        let r = JSON.parse(data.join());
-                        console.log('resp = ', r);
-                        if (r.errorCode > 0) {
-                            common.logging.error(r.message, r.details);
+                        try {
+                            let r = JSON.parse(data.join());
+                            console.log('resp = ', r);
+                            if (r.errorCode > 0) {
+                                common.logging.error(r.message, r.details);
+                                reject("Momo error: " + r.errorCode + " " + r.message + " " + r.details);
+                            }
+                            else {
+                                resolve({
+                                    payUrl: r.payUrl,
+                                    qrCodeUrl: r.qrCodeUrl,
+                                    message: r.message,
+                                    localMessage: r.localMessage,
+                                    deeplink: r.deeplink,
+                                    deeplinkWebInApp: r.deeplinkWebInApp
+                                });
+                            }
                         }
-                        resolve({
-                            payUrl: r.payUrl,
-                            qrCodeUrl: r.qrCodeUrl,
-                            message: r.message,
-                            localMessage: r.localMessage,
-                            errorCode: r.errorCode,
-                            deeplink: r.deeplink,
-                            deeplinkWebInApp: r.deeplinkWebInApp
-                        });
+                        catch (ex){
+                            console.error("Error ", ex.message);
+                            reject(ex.message);
+                        }
                     }
                     else {
                         reject();
@@ -103,7 +111,54 @@ const momo = {
             req.write(body);
             req.end();
         });
+    },
+
+    verifyMomoIPN: function(notifyData) {
+        let requestId = notifyData.requestId;
+        let partnerCode = notifyData.partnerCode;
+        let accessKey = notifyData.accessKey;
+        let orderId = notifyData.orderId;
+        let orderInfo = notifyData.orderInfo;
+        let orderType = notifyData.orderType;
+        let transId = notifyData.transId;
+        let amount = "" + notifyData.amount;
+        let errorCode = notifyData.errorCode;
+        let message = notifyData.message;
+        let localMessage = notifyData.localMessage;
+        let payType = notifyData.payType;
+        let responseTime = notifyData.responseTime;
+        let extraData = notifyData.extraData;
+        let actualSignature = notifyData.signature;
+
+        let rawSignature = `partnerCode=${partnerCode}&accessKey=${accessKey}&requestId=${requestId}&amount=${amount}&orderId=${orderId}&orderInfo=${orderInfo}&orderType=${orderType}&transId=${transId}&message=${message}&localMessage=${localMessage}&responseTime=${responseTime}&errorCode=${errorCode}&payType=${payType}&extraData=${extraData}`
+        //signature    
+        console.log(rawSignature);
+        let secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
+        let expectedSignature = crypto.createHmac('sha256', secretKey)
+                           .update(rawSignature)
+                           .digest('hex');    
+
+        if (expectedSignature != actualSignature) {
+            return Promise.reject(new common.errors.NotFoundError({
+                    message: "Unexpected Signature"
+                }));
+        }
         
+        errorCode = parseInt(errorCode);
+        if (errorCode !== 0) {
+            return Promise.reject(new common.errors.NotFoundError({
+                    message: "Payment failure"
+                }));
+        }
+
+        let extraDataArray = extraData.split(";");
+        let data = {} 
+        extraDataArray.forEach(element => {
+            let kv = element.split("=");
+            data[kv[0]] = kv[1];
+        });
+
+        return Promise.resolve(data);
     }
 }
 

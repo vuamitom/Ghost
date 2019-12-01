@@ -3,26 +3,6 @@ const common = require('../../../../../lib/common');
 const mapper = require('./utils/mapper');
 
 module.exports = {
-    //browse(models, apiConfig, frame) {
-        //debug('browse');
-
-        //frame.response = {
-            //users: models.data.map(model => mapper.mapUser(model, frame)),
-            //meta: models.meta
-        //};
-
-        //debug(frame.response);
-    //},
-
-    //read(model, apiConfig, frame) {
-        //debug('read');
-        //frame.response = {
-            //message: 'Okay'
-        //};
-
-        //debug(frame.response);
-    //},
-
     add(model, apiConfig, frame){
         debug('add');
         frame.response = {
@@ -60,9 +40,4 @@ module.exports = {
 
         debug(frame.response);
     }
-
-    //edit() {
-        //debug('edit');
-        //this.read(...arguments);
-    //},
 };

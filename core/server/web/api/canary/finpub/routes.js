@@ -15,7 +15,8 @@ module.exports = function apiRoutes() {
     router.post('/purchases/:id', mw.authenticateReader, http(apiCanary.readers.purchase));
     router.get('/purchases', mw.authenticateReader, http(apiCanary.readers.listpurchases));
     // Payment
-    router.post('/payments', mw.authenticatePublic, http(apiCanary.payments.payWithMomo));
+    router.post('/payments', mw.authenticateReader, http(apiCanary.payments.payWithMomo));
+    router.post('/notifyPaymentComplete', mw.authenticatePublic, http(apiCanary.payments.notifyPayment));
     
     return router;
 };
