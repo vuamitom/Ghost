@@ -4,6 +4,8 @@ const config = require('../../../../server/config');
 const urlService = require('../../../services/url');
 const urlUtils = require('../../../../server/lib/url-utils');
 const helpers = require('../helpers');
+const session = require('../../../../server/services/auth/session');
+const apiKeyAuth = require('../../../../server/services/auth/api-key/admin');
 
 /**
  * @description Entry controller.
@@ -13,8 +15,20 @@ const helpers = require('../helpers');
  * @returns {Promise}
  */
 module.exports = function entryController(req, res, next) {
-    debug('entryController', res.routerOptions);
+    debug('==== entryController', req.path, res.routerOptions, res.locals, req.session);
 
+    //console.trace("entrycontroller trace");
+    // Immitate admin api authentication here:
+    apiKeyAuth.authenticate(req, res, function(err) {
+            if (err) {
+                debug("=== error to apiKeyAuth authenticate", err);
+                return;
+            }
+            session.authenticate(req, res, function(err2) {
+                    debug("== session authenticate error ", err2); 
+                });
+        });
+    debug("Finish authentication ", req.user, req.session);
     return helpers.entryLookup(req.path, res.routerOptions, res.locals)
         .then(function then(lookup) {
             // Format data 1
@@ -87,7 +101,7 @@ module.exports = function entryController(req, res, next) {
             if (res.locals.apiVersion !== 'v0.1' && res.locals.apiVersion !== 'v2') {
                 entry.access = !!entry.html;
             }
-
+            console.trace("Tracelog inside controllers's entry");
             helpers.secure(req, entry);
 
             const renderer = helpers.renderEntry(req, res);

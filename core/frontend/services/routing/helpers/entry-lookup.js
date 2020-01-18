@@ -13,7 +13,7 @@ const routeMatch = require('path-match')();
  */
 function entryLookup(postUrl, routerOptions, locals) {
     debug(postUrl);
-
+    console.log("Entry lookup", postUrl, routerOptions, locals);
     const api = require('../../../../server/api')[locals.apiVersion];
     const targetPath = url.parse(postUrl).path;
     const permalinks = routerOptions.permalinks;

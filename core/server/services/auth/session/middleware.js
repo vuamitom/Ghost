@@ -45,6 +45,7 @@ const getSession = (req, res, next) => {
             }
         });
     }
+    console.log("calling the session middleware");
     return UNO_SESSIONIONA(req, res, next);
 };
 
@@ -98,7 +99,9 @@ const cookieCsrfProtection = (req) => {
 const authenticate = (req, res, next) => {
     // CASE: we don't have a cookie header so allow fallthrough to other
     // auth middleware or final "ensure authenticated" check
+    console.log("Trying to authenticate");
     if (!req.headers || !req.headers.cookie) {
+        console.log("Session authenticated, no cookie found");
         req.user = null;
         return next();
     }
@@ -115,6 +118,7 @@ const authenticate = (req, res, next) => {
         }
 
         if (!req.session || !req.session.user_id) {
+            console.log("There is no request session ");
             req.user = null;
             return next();
         }
