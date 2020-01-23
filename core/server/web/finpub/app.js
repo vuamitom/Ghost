@@ -75,25 +75,25 @@ module.exports = function setupReaderApp() {
     // user input 
     readerApp.use('/members', setupTempMember());
 
-    readerApp.get('/momo', async function (req, res) {
-        // returnUrl?{your_parameters}&partnerCode=$partnerCode&accessKey=$accessKey
-        // &requestId=$requestId&amount=$amount&orderId=orderId
-        // &orderInfo=$orderInfo&orderType=momo_wallet&transId=$transId&message=$message
-        // &localMessage=$localMessage&responseTime=$responseTime&errorCode=$errorCode
-        // &payType=$payType&extraData=$extraData&signature=$signature
-        console.log('momo redirect ', req.query);
-        res.writeHead(200);
-        res.end('momo');
-        // try {
-        //     const token = await membersService.ssr.getIdentityTokenForMemberFromSession(req, res);
-        //     res.writeHead(200);
-        //     res.end(token);
-        // } catch (err) {
-        //     common.logging.warn(err.message);
-        //     res.writeHead(err.statusCode);
-        //     res.end(err.message);
-        // }
-    });
+    // readerApp.get('/momo', async function (req, res) {
+    //     // returnUrl?{your_parameters}&partnerCode=$partnerCode&accessKey=$accessKey
+    //     // &requestId=$requestId&amount=$amount&orderId=orderId
+    //     // &orderInfo=$orderInfo&orderType=momo_wallet&transId=$transId&message=$message
+    //     // &localMessage=$localMessage&responseTime=$responseTime&errorCode=$errorCode
+    //     // &payType=$payType&extraData=$extraData&signature=$signature
+    //     console.log('momo redirect ', req.query);
+    //     res.writeHead(200);
+    //     res.end('momo');
+    //     // try {
+    //     //     const token = await membersService.ssr.getIdentityTokenForMemberFromSession(req, res);
+    //     //     res.writeHead(200);
+    //     //     res.end(token);
+    //     // } catch (err) {
+    //     //     common.logging.warn(err.message);
+    //     //     res.writeHead(err.statusCode);
+    //     //     res.end(err.message);
+    //     // }
+    // });
 
 
     // Render error page in case of maintenance
