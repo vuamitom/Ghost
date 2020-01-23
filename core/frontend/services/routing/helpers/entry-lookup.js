@@ -13,7 +13,10 @@ const routeMatch = require('path-match')();
  */
 function entryLookup(postUrl, routerOptions, locals) {
     debug(postUrl);
-    console.log("Entry lookup", postUrl, routerOptions, locals);
+    // debug(locals.apiVersion);
+    // debug(routerOptions.query.controller);
+    // debug(routerOptions.query.resource);
+    // console.log("Entry lookup", postUrl, routerOptions, locals);
     const api = require('../../../../server/api')[locals.apiVersion];
     const targetPath = url.parse(postUrl).path;
     const permalinks = routerOptions.permalinks;
@@ -43,6 +46,16 @@ function entryLookup(postUrl, routerOptions, locals) {
     };
 
     options.context = {member: locals.member};
+    // options.context = {
+    //     _member: locals.member,
+    //     get member() {
+    //         debug('---------------------------------------------------------111')
+    //         // var a = 1/0;
+    //         console.trace();
+    //         return this._member;
+    //     }
+    // };
+    // debug('context = ', options.context);
 
     return (api[routerOptions.query.controller] || api[routerOptions.query.resource])
         .read(_.extend(_.pick(params, 'slug', 'id'), options))
@@ -52,7 +65,7 @@ function entryLookup(postUrl, routerOptions, locals) {
             if (!entry) {
                 return Promise.resolve();
             }
-
+            // debug('Done read ', !!entry.html)
             return {
                 entry: entry,
                 isEditURL: isEditURL,
