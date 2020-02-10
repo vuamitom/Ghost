@@ -464,6 +464,12 @@ fixtures = {
         return Promise.map(DataGenerator.forKnex.api_keys, function (api_key) {
             return models.ApiKey.add(api_key, module.exports.context.internal);
         });
+    },
+
+    insertEmails: function insertEmails() {
+        return Promise.map(DataGenerator.forKnex.emails, function (email) {
+            return models.Email.add(email, module.exports.context.internal);
+        });
     }
 };
 
@@ -613,6 +619,9 @@ toDoList = {
     },
     api_keys: function insertApiKeys() {
         return fixtures.insertApiKeys();
+    },
+    emails: function insertEmails() {
+        return fixtures.insertEmails();
     }
 };
 
@@ -921,6 +930,13 @@ startGhost = function startGhost(options) {
             settingsCache.shutdown();
             settingsCache.reset();
             return knexMigrator.init();
+        })
+        .then(function setPragma() {
+            if (config.get('database:client') === 'sqlite3') {
+                return db.knex.raw('PRAGMA journal_mode = TRUNCATE;');
+            } else {
+                return Promise.resolve();
+            }
         })
         .then(function initializeGhost() {
             urlService.resetGenerators();

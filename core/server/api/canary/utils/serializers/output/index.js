@@ -109,5 +109,13 @@ module.exports = {
 
     get payments() {
         return require('./payments');
+    },
+
+    get email_preview() {
+        return require('./email-preview');
+    },
+
+    get emails() {
+        return require('./emails');
     }
 };

@@ -55,6 +55,7 @@ const expectedProperties = {
     ,
     member: _(schema.members)
         .keys()
+        .concat('comped')
     ,
     role: _(schema.roles)
         .keys()
@@ -70,6 +71,8 @@ const expectedProperties = {
     ,
     webhook: _(schema.webhooks)
         .keys()
+    ,
+    email_preview: ['html', 'subject', 'plaintext']
 };
 
 _.each(expectedProperties, (value, key) => {

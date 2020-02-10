@@ -37,7 +37,7 @@ function defaultRelations(frame) {
         return false;
     }
 
-    frame.options.withRelated = ['tags', 'authors', 'authors.roles'];
+    frame.options.withRelated = ['tags', 'authors', 'authors.roles', 'email'];
 }
 
 function setDefaultOrder(frame) {
@@ -50,6 +50,12 @@ function setDefaultOrder(frame) {
 
     if (!frame.options.order && !includesOrderedRelations) {
         frame.options.order = 'published_at desc';
+    }
+}
+
+function forceVisibilityColumn(frame) {
+    if (frame.options.columns && !frame.options.columns.includes('visibility')) {
+        frame.options.columns.push('visibility');
     }
 }
 
@@ -108,6 +114,7 @@ module.exports = {
             removeMobiledocFormat(frame);
 
             setDefaultOrder(frame);
+            forceVisibilityColumn(frame);
         }
 
         if (!localUtils.isContentAPI(frame)) {
@@ -135,6 +142,7 @@ module.exports = {
             removeMobiledocFormat(frame);
 
             setDefaultOrder(frame);
+            forceVisibilityColumn(frame);
         }
 
         if (!localUtils.isContentAPI(frame)) {
