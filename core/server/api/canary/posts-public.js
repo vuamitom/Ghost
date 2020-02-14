@@ -66,6 +66,22 @@ module.exports = {
                         });
                     }
 
+                    /*** TO FILL IN 
+                    if (model.fee) {
+                        // can return a promise here 
+                        return getPostAccess(frame.original.context.member).then((hasAccess) => {
+                            // either assign to model, 
+                            // and check later in checkPostAccess() of content-gating.js
+                            model.memberPaid = hasAccess // TODO: update 
+                            // OR:
+                            // just override visibility
+                            // model.visibility = 'public'
+                        });
+                    }
+                    else {
+                        return model;    
+                    }
+                    **/
                     return model;
                 });
         }
