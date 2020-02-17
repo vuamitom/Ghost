@@ -14,19 +14,19 @@ module.exports = {
         options: [],
         data: [],
         permissions: true,
+
         query(frame) {
             var orderInfo = "pay with MoMo";
             var orderId = uuidv1()
             var requestId = uuidv1()
-
-            let amount = frame.data.amount;
             let post_id = frame.data.post_id;
-            let reader_id = frame.options.context.user;
+            // member
+            let reader_id = frame.original.context.member.id;
             console.log('User ', reader_id, ' pay with momo for ', post_id);
             // check if the post exists
             return models.Post.findOne({id: post_id}, {require: true})
             .then((post) => {
-                return momo.payWithMomo(amount, post_id, reader_id, 
+                return momo.payWithMomo(post.fee, post_id, reader_id, 
                                         orderId, requestId, orderInfo);
             });
         }

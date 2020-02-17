@@ -10,12 +10,13 @@ module.exports = function apiRoutes() {
 
     const http = apiCanary.http;
 
-    router.post('/readers', mw.authenticatePublic, http(apiCanary.readers.add));
+    //router.post('/readers', mw.authenticatePublic, http(apiCanary.readers.add));
     //router.get('/readers', mw.authenticatePublic, http(apiCanary.readers.read));
-    router.post('/purchases/:id', mw.authenticateReader, http(apiCanary.readers.purchase));
-    router.get('/purchases', mw.authenticateReader, http(apiCanary.readers.listpurchases));
-    // Payment
-    router.post('/payments', mw.authenticateReader, http(apiCanary.payments.payWithMomo));
+    //router.post('/purchases/:id', mw.authenticateReader, http(apiCanary.readers.purchase));
+    //router.get('/purchases', mw.authenticatePublic, http(apiCanary.readers.listpurchases));
+    // Trigger momo payment process
+    router.get('/payments', mw.authenticatePublic, http(apiCanary.payments.payWithMomo));
+    // Momo callback
     router.post('/notifyPaymentComplete', mw.authenticatePublic, http(apiCanary.payments.notifyPayment));
     
     return router;

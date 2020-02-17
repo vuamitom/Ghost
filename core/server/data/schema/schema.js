@@ -367,6 +367,15 @@ module.exports = {
         plan_amount: {type: 'integer', nullable: false},
         plan_currency: {type: 'string', maxLength: 3, nullable: false}
     },
+    payments: {
+        id: {type: 'string', maxlength: 24, nullable: false, primary: true},
+        member_id: {type: 'string', maxlength: 24, nullable: false, unique: false},
+        post_id: {type: 'string', maxlength: 24, nullable: false, unique: false},
+        created_at: {type: 'dateTime', nullable: true},
+        created_by: {type: 'string', maxlength: 24, nullable: true},
+        updated_at: {type: 'dateTime', nullable: true},
+        updated_by: {type: 'string', maxlength: 24, nullable: true}
+    },
     actions: {
         id: {type: 'string', maxlength: 24, nullable: false, primary: true},
         resource_id: {type: 'string', maxlength: 24, nullable: true},
