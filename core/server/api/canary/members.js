@@ -5,6 +5,7 @@ const models = require('../../models');
 const membersService = require('../../services/members');
 const common = require('../../lib/common');
 const fsLib = require('../../lib/fs');
+const _ = require('lodash');
 
 const decorateWithSubscriptions = async function (member) {
     // NOTE: this logic is here until relations between Members/MemberStripeCustomer/StripeCustomerSubscription
@@ -18,6 +19,11 @@ const decorateWithSubscriptions = async function (member) {
     });
 };
 
+/** NOTE: this method should not exist at all and needs to be cleaned up
+    it was created due to a bug in how CSV is currently created for exports
+    Export bug was fixed in 3.6 but method exists to handle older csv exports with undefined
+**/
+
 const cleanupUndefined = (obj) => {
     for (let key in obj) {
         if (obj[key] === 'undefined') {
@@ -29,7 +35,7 @@ const cleanupUndefined = (obj) => {
 // NOTE: this method can be removed once unique constraints are introduced ref.: https://github.com/TryGhost/Ghost/blob/e277c6b/core/server/data/schema/schema.js#L339
 const sanitizeInput = (members) => {
     const customersMap = members.reduce((acc, member) => {
-        if (member.stripe_customer_id) {
+        if (member.stripe_customer_id && member.stripe_customer_id !== 'undefined') {
             if (acc[member.stripe_customer_id]) {
                 acc[member.stripe_customer_id] += 1;
             } else {
@@ -53,6 +59,22 @@ const sanitizeInput = (members) => {
 
     return sanitized;
 };
+
+function serializeMemberLabels(labels) {
+    if (labels) {
+        return labels.filter((label) => {
+            return !!label;
+        }).map((label) => {
+            if (_.isString(label)) {
+                return {
+                    name: label.trim()
+                };
+            }
+            return label;
+        });
+    }
+    return [];
+}
 
 const listMembers = async function (options) {
     const res = (await models.Member.findPage(options));
@@ -144,7 +166,7 @@ const members = {
                 }
 
                 if (frame.options.send_email) {
-                    await membersService.api.sendEmailWithMagicLink(model.get('email'), frame.options.email_type);
+                    await membersService.api.sendEmailWithMagicLink({email: model.get('email'), requestedType: frame.options.email_type});
                 }
 
                 return decorateWithSubscriptions(member);
@@ -223,7 +245,7 @@ const members = {
         async query(frame) {
             frame.options.require = true;
 
-            let member = await models.Member.findOne(frame.data, frame.options);
+            let member = await models.Member.findOne(frame.options);
 
             if (!member) {
                 throw new common.errors.NotFoundError({
@@ -270,6 +292,7 @@ const members = {
         },
         validation: {},
         async query(frame) {
+            frame.options.withRelated = ['labels'];
             return listMembers(frame.options);
         }
     },
@@ -303,6 +326,9 @@ const members = {
             }, {
                 name: 'complimentary_plan',
                 lookup: /complimentary_plan/i
+            }, {
+                name: 'labels',
+                lookup: /labels/i
             }];
 
             return fsLib.readCSV({
@@ -312,9 +338,10 @@ const members = {
                 const sanitized = sanitizeInput(result);
                 invalid += result.length - sanitized.length;
 
-                return Promise.all(sanitized.map((entry) => {
+                return Promise.map(sanitized, ((entry) => {
                     const api = require('./index');
-
+                    entry.labels = (entry.labels && entry.labels.split(',')) || [];
+                    const entryLabels = serializeMemberLabels(entry.labels);
                     cleanupUndefined(entry);
                     return Promise.resolve(api.members.add.query({
                         data: {
@@ -324,7 +351,8 @@ const members = {
                                 note: entry.note,
                                 subscribed: (String(entry.subscribed_to_emails).toLowerCase() === 'true'),
                                 stripe_customer_id: entry.stripe_customer_id,
-                                comped: (String(entry.complimentary_plan).toLocaleLowerCase() === 'true')
+                                comped: (String(entry.complimentary_plan).toLocaleLowerCase() === 'true'),
+                                labels: entryLabels
                             }]
                         },
                         options: {
@@ -332,17 +360,26 @@ const members = {
                             options: {send_email: false}
                         }
                     })).reflect();
-                })).each((inspection) => {
-                    if (inspection.isFulfilled()) {
-                        fulfilled = fulfilled + 1;
-                    } else {
-                        if (inspection.reason() instanceof common.errors.ValidationError) {
-                            duplicates = duplicates + 1;
+                }), {concurrency: 10})
+                    .each((inspection) => {
+                        if (inspection.isFulfilled()) {
+                            fulfilled = fulfilled + 1;
                         } else {
-                            invalid = invalid + 1;
+                            if (inspection.reason() instanceof common.errors.ValidationError) {
+                                duplicates = duplicates + 1;
+                            } else {
+                                // NOTE: if the error happens as a result of pure API call it doesn't get logged anywhere
+                                //       for this reason we have to make sure any unexpected errors are logged here
+                                if (Array.isArray(inspection.reason())) {
+                                    common.logging.error(inspection.reason()[0]);
+                                } else {
+                                    common.logging.error(inspection.reason());
+                                }
+
+                                invalid = invalid + 1;
+                            }
                         }
-                    }
-                });
+                    });
             }).then(() => {
                 return {
                     meta: {

@@ -201,6 +201,11 @@ describe('Database Migration (special functions)', function () {
             permissions[65].should.be.AssignedToRoles(['Administrator', 'Editor', 'Author', 'Contributor', 'Admin Integration']);
             permissions[66].name.should.eql('Retry emails');
             permissions[66].should.be.AssignedToRoles(['Administrator', 'Editor', 'Admin Integration']);
+            permissions[67].name.should.eql('Browse labels');
+            permissions[68].name.should.eql('Read labels');
+            permissions[69].name.should.eql('Edit labels');
+            permissions[70].name.should.eql('Add labels');
+            permissions[71].name.should.eql('Delete labels');
         });
 
         describe('Populate', function () {
@@ -259,7 +264,7 @@ describe('Database Migration (special functions)', function () {
                     result.roles.at(8).get('name').should.eql('Reader');
                     
                     // Permissions
-                    result.permissions.length.should.eql(67);
+                    result.permissions.length.should.eql(72);
                     result.permissions.toJSON().should.be.CompletePermissions();
                 });
             });

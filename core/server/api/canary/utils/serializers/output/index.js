@@ -117,5 +117,9 @@ module.exports = {
 
     get emails() {
         return require('./emails');
+    },
+
+    get labels() {
+        return require('./labels');
     }
 };
