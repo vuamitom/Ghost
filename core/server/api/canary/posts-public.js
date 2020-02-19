@@ -1,6 +1,8 @@
 const models = require('../../models');
 const common = require('../../lib/common');
 const allowedIncludes = ['tags', 'authors'];
+const debug = require('ghost-ignition').debug('api:canary:post-public');
+
 
 module.exports = {
     docName: 'posts',
@@ -59,30 +61,30 @@ module.exports = {
         permissions: true,
         query(frame) {
             return models.Post.findOne(frame.data, frame.options)
-                .then((model) => {
-                    if (!model) {
+                .then((postModel) => {
+                    if (!postModel) {
                         throw new common.errors.NotFoundError({
                             message: common.i18n.t('errors.api.posts.postNotFound')
                         });
                     }
+                    
+                    let post = postModel.toJSON();
+                    let member = frame.original.context.member
 
-                    /*** TO FILL IN 
-                    if (model.fee) {
-                        // can return a promise here 
-                        return getPostAccess(frame.original.context.member).then((hasAccess) => {
-                            // either assign to model, 
-                            // and check later in checkPostAccess() of content-gating.js
-                            model.memberPaid = hasAccess // TODO: update 
-                            // OR:
-                            // just override visibility
-                            // model.visibility = 'public'
-                        });
+                    if (post.fee && member) {
+                        debug("Check if member ", member.id, " has purchased ", post.id);
+                        return models.Payment.findOne({member_id: member.id, post_id: post.id})
+                            .then((paymentModel) => {
+                                if (paymentModel) {
+                                    debug("Member ", member.id, " has purchased ", post.id);
+                                    postModel.set('memberPaid', true);
+                                }
+                                return postModel;
+                            });
                     }
                     else {
-                        return model;    
-                    }
-                    **/
-                    return model;
+                        return postModel;
+                    }                    
                 });
         }
     }
