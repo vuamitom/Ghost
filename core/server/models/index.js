@@ -38,7 +38,8 @@ models = [
     'member-stripe-customer',
     'stripe-customer-subscription',
     'email',
-    'label'
+    'label',
+    'payment'
 ];
 
 function init() {

@@ -1,5 +1,6 @@
 const cors = require('cors');
 const auth = require('../../../../services/auth');
+const member = require('../../../../services/members/middleware')
 const shared = require('../../../shared');
 
 /**
@@ -10,14 +11,14 @@ const shared = require('../../../shared');
  * - url redirects MUST happen after cors, otherwise cors header can get lost on redirect
  */
 
-/**
- * Authentication for public endpoints
- */
+
 module.exports.authenticatePublic = [
+    member.createSessionFromToken,
     cors(),
-    shared.middlewares.urlRedirects.adminRedirect,
+    // shared.middlewares.urlRedirects.adminRedirect,
     shared.middlewares.prettyUrls
 ];
+
 
 module.exports.authenticateReader = [
     auth.authenticate.authenticateAdminApi,

@@ -5,7 +5,7 @@ const forPost = (attrs, frame) => {
     if (labs.isSet('members')) {
         const memberHasAccess = membersService.contentGating.checkPostAccess(attrs, frame.original.context.member);
 
-        if (!memberHasAccess) {
+        if (!memberHasAccess || (attrs.fee && !attrs.memberPaid)) {
             ['plaintext', 'html'].forEach((field) => {
                 if (attrs[field] !== undefined) {
                     attrs[field] = '';
