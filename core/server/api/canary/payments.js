@@ -1,9 +1,7 @@
-const web = require('../../web');
 const uuidv1 = require('uuid/v1');
 const momo = require('../../services/payments/momo');
 const models = require('../../models');
 const common = require('../../lib/common');
-const baseUtils = require('../../models/base/utils');
 // const https = require('https');
 const debug = require('ghost-ignition').debug('api:canary:payments');
 
@@ -32,7 +30,7 @@ module.exports = {
                 if (!post.fee) {
                     return Promise.reject(new common.errors.ValidationError({err: "Article doesn't have fee"}));
                 }
-                return momo.payWithMomo(post.fee, post_id, reader_id, 
+                return momo.payWithMomo(post.fee *1000, post_id, reader_id, 
                                         orderId, requestId, orderInfo);
             }).catch((err) => {
                 return Promise.reject(new common.errors.ValidationError({err: err}));
