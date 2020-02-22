@@ -227,9 +227,9 @@
         var r = fetch(sessionApi, config);
         return r;
     }
-    window.finpub = window.finpub || {
-        signup: signup
-    };
+    // window.finpub = window.finpub || {
+    //     signup: signup
+    // };
 
     function getPayUrl(postId) {
         var getPaymentApi = '/ghost/api/canary/finpub/payments?post_id=' + encodeURIComponent(postId);
