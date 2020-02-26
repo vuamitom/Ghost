@@ -17,7 +17,8 @@ module.exports = {
             var orderInfo = "pay with MoMo";
             var orderId = uuidv1()
             var requestId = uuidv1()
-            let post_id = frame.data.post_id;
+            let post_id = frame.data.post_id,
+                returnUrl = frame.data.returnUrl;
             // member
             let reader_id = frame.original.context.member.id;
             debug('User ', reader_id, ' pay with momo for Post: ', post_id);
@@ -31,7 +32,7 @@ module.exports = {
                     return Promise.reject(new common.errors.ValidationError({err: "Article doesn't have fee"}));
                 }
                 return momo.payWithMomo(post.fee *1000, post_id, reader_id, 
-                                        orderId, requestId, orderInfo);
+                                        orderId, requestId, orderInfo, returnUrl);
             }).catch((err) => {
                 return Promise.reject(new common.errors.ValidationError({err: err}));
             });

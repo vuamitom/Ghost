@@ -232,7 +232,7 @@
     // };
 
     function getPayUrl(postId) {
-        var getPaymentApi = '/ghost/api/canary/finpub/payments?post_id=' + encodeURIComponent(postId);
+        var getPaymentApi = '/ghost/api/canary/finpub/payments?post_id=' + encodeURIComponent(postId) + "&returnUrl=" + encodeURIComponent(window.location.href);
         var config = {
             method: 'get',
             headers: {

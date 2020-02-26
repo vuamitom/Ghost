@@ -5,7 +5,7 @@ const config = require('../../config')
 const momo = {
 
     payWithMomo: function(amount, postId, userId, 
-                          orderId, requestId, orderInfo) {
+                          orderId, requestId, orderInfo, redirect) {
         //parameters send to MoMo get get payUrl
         // var endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor"
         // var hostname = "https://test-payment.momo.vn"
@@ -14,7 +14,7 @@ const momo = {
         var accessKey = "F8BBA842ECF85"
         var serectkey = "K951B6PE1waDMi640xX08PD3vg6EkVlz"
         var orderInfo = orderInfo;
-        var returnUrl = config.get('payment').returnUrl;
+        var returnUrl = redirect || config.get('payment').returnUrl;
         var notifyurl = config.get('payment').notifyUrl;
         var amount = "" + amount;
         var orderId = orderId
@@ -57,26 +57,23 @@ const momo = {
         };
 
         //Send the request and get the response
-        console.log("Sending....")
+        // console.log("Sending....")
 
         return new Promise((resolve, reject) => {
             var req = https.request(options, (res) => {
 
-                let data = [];
+                let data = '';
                 res.setEncoding('utf8');
                 res.on('data', (body) => {
-                    // console.log('Body');
-                    // console.log(body);
-                    // console.log('payURL');
-                    // console.log(JSON.parse(body).payUrl);
-                    data.push(body);
+                    // data.push(body);
+                    data += body;
                 });
                 res.on('end', () => {
 
                     if (data.length) {
                         try {
-                            let r = JSON.parse(data.join());
-                            console.log('resp = ', r);
+                            let r = JSON.parse(data);
+                            
                             if (r.errorCode > 0) {
                                 common.logging.error(r.message, r.details);
                                 reject("Momo error: " + r.errorCode + " " + r.message + " " + r.details);
@@ -134,7 +131,7 @@ const momo = {
 
         let rawSignature = `partnerCode=${partnerCode}&accessKey=${accessKey}&requestId=${requestId}&amount=${amount}&orderId=${orderId}&orderInfo=${orderInfo}&orderType=${orderType}&transId=${transId}&message=${message}&localMessage=${localMessage}&responseTime=${responseTime}&errorCode=${errorCode}&payType=${payType}&extraData=${extraData}`
         //signature    
-        console.log(rawSignature);
+        // console.log(rawSignature);
         let secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
         let expectedSignature = crypto.createHmac('sha256', secretKey)
                            .update(rawSignature)
