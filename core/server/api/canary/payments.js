@@ -10,7 +10,7 @@ module.exports = {
 
     payWithMomo: {
         options: [],
-        data: ['post_id'],
+        data: ['post_id', 'returnUrl'],
         permissions: true,
 
         query(frame) {
