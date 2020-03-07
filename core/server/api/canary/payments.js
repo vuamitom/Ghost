@@ -10,7 +10,7 @@ module.exports = {
 
     payWithMomo: {
         options: [],
-        data: ['post_id', 'returnUrl'],
+        data: ['post_id', 'returnUrl', 'bankCode'],
         permissions: true,
 
         query(frame) {
@@ -18,10 +18,11 @@ module.exports = {
             var orderId = uuidv1()
             var requestId = uuidv1()
             let post_id = frame.data.post_id,
-                returnUrl = frame.data.returnUrl;
+                returnUrl = frame.data.returnUrl,
+                bankCode = frame.data.bankCode;
             // member
             let reader_id = frame.original.context.member.id;
-            debug('User ', reader_id, ' pay with momo for Post: ', post_id);
+            debug('User ', reader_id, ' pay with momo for Post: ', post_id, ' bankCode? ', bankCode);
             // check if the post exists
             return models.Post.findOne({id: post_id}, {require: true})
             .then((model) => {
@@ -32,7 +33,7 @@ module.exports = {
                     return Promise.reject(new common.errors.ValidationError({err: "Article doesn't have fee"}));
                 }
                 return momo.payWithMomo(post.fee *1000, post_id, reader_id, 
-                                        orderId, requestId, orderInfo, returnUrl);
+                                        orderId, requestId, orderInfo, returnUrl, bankCode);
             }).catch((err) => {
                 return Promise.reject(new common.errors.ValidationError({err: err}));
             });
