@@ -1,11 +1,14 @@
 const crypto = require('crypto');
 const https = require('https');
-const common = require('../../lib/common')
-const config = require('../../config')
+const common = require('../../lib/common');
+const config = require('../../config');
+const debug = require('ghost-ignition').debug('services:payments:momo');
+
 const momo = {
 
     payWithMomo: function(amount, postId, userId, 
-                          orderId, requestId, orderInfo, redirect) {
+                          orderId, requestId, orderInfo, 
+                          redirect, bankCode) {
         //parameters send to MoMo get get payUrl
         // var endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor"
         // var hostname = "https://test-payment.momo.vn"
@@ -17,20 +20,33 @@ const momo = {
         var returnUrl = redirect || config.get('payment').returnUrl;
         var notifyurl = config.get('payment').notifyUrl;
         var amount = "" + amount;
-        var orderId = orderId
-        var requestId = requestId
-        var requestType = "captureMoMoWallet"
+        var orderId = orderId;
+        var requestId = requestId;
+        var bankCode = bankCode;
+        var requestType = (bankCode ? "payWithMoMoATM" : "captureMoMoWallet");
         var extraData = "postId=" + postId + ";userId=" + userId
-        //before sign HMAC SHA256 with format
-        //partnerCode=$partnerCode&accessKey=$accessKey&requestId=$requestId&amount=$amount&orderId=$oderId&orderInfo=$orderInfo&returnUrl=$returnUrl&notifyUrl=$notifyUrl&extraData=$extraData
-        var rawSignature = "partnerCode="+partnerCode+"&accessKey="+accessKey+"&requestId="+requestId+"&amount="+amount+"&orderId="+orderId+"&orderInfo="+orderInfo+"&returnUrl="+returnUrl+"&notifyUrl="+notifyurl+"&extraData="+extraData
+        debug("Triggering Momo Payment Process: ", requestType);
+        // Signature for payment with ATM vs signature for payment wallet are different
+        // ATM: https://developers.momo.vn/#/docs/aio/atm?id=ph%c6%b0%c6%a1ng-th%e1%bb%a9c-thanh-to%c3%a1n
+        // Wallet: https://developers.momo.vn/#/docs/aio/?id=ph%c6%b0%c6%a1ng-th%e1%bb%a9c-thanh-to%c3%a1n
+        var rawSignature = "partnerCode=" + partnerCode
+                           + "&accessKey=" + accessKey 
+                           + "&requestId=" + requestId
+                           + (bankCode ? ("&bankCode=" + bankCode) : "") 
+                           + "&amount=" + amount 
+                           + "&orderId=" + orderId 
+                           + "&orderInfo=" + orderInfo 
+                           + "&returnUrl=" + returnUrl
+                           + "&notifyUrl=" + notifyurl 
+                           + "&extraData=" + extraData
+                           + (bankCode ? ("&requestType=" + requestType) : "");
         //signature    
         var signature = crypto.createHmac('sha256', serectkey)
                            .update(rawSignature)
                            .digest('hex');    
 
         //json object send to MoMo endpoint
-        var body = JSON.stringify({
+        let momoRequest = {
             partnerCode : partnerCode,
             accessKey : accessKey,
             requestId : requestId,
@@ -42,7 +58,12 @@ const momo = {
             extraData : extraData,
             requestType : requestType,
             signature : signature,
-        })
+        };
+        if (bankCode) {
+            momoRequest["bankCode"] = bankCode;
+        }
+
+        var body = JSON.stringify(momoRequest);
         //Create the HTTPS objects
         let momoUrl = config.get('payment').momoUrl;
         var options = {
@@ -55,9 +76,6 @@ const momo = {
             'Content-Length': Buffer.byteLength(body)
          }
         };
-
-        //Send the request and get the response
-        // console.log("Sending....")
 
         return new Promise((resolve, reject) => {
             var req = https.request(options, (res) => {

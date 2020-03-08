@@ -43,9 +43,14 @@ An example of integration with theme is below.
 
 Upon accessing a post, for which the member hasn't purchased, he/she should see prompt for payment with momo. Template can use (entity.fee && entity.access) to determine whether to show the prompt.
 
-1. When user click on the prompt, a request must be made to the server at the following url: `http://{host}/ghost/api/canary/finpub/payments?post_id={post_id}`
+1. When user click on the prompt, a request must be made to the server at the following url: `http://{host}/ghost/api/canary/finpub/payments?post_id={post_id}`. The GET endpoint accepts three parameters:
+    - `post_id`: id of the post to be purchased
+    - `returnUrl` (optional): the url Momo will redirect client to after payment is made using the payUrl
+    - `bankCode` (optional): this parameter must be supplied for ATM payment. The list of supported bank code can be found here: [MomoBankCode](https://developers.momo.vn/#/docs/aio/atm?id=bank-code). Dev testing can use "SML" for the bank code. For UI integration, all supported bank logos are available [here](https://developers.momo.vn/#/docs/aio/atm?id=logo-ng%c3%a2n-h%c3%a0ng).
 
-2. The api's response will contain two elements: `payUrl` and `deeplink`. If user is using web browser, he/she should be redirected to `payUrl`, else `deeplink` for mobile.
+2. The api's response will contain two elements: `payUrl` and `deeplink`.
+    - If user is using web browser, he/she should be redirected to `payUrl`, else `deeplink` for mobile.
+    - If ATM mode is used (i.e, `bankCode` is provided when triggering the Momo payment process), only `payUrl` will be returned. 
 
 ## Configuration
 
