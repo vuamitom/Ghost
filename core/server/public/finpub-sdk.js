@@ -231,8 +231,11 @@
     //     signup: signup
     // };
 
-    function getPayUrl(postId) {
+    function getPayUrl(postId, bankCode) {
         var getPaymentApi = '/ghost/api/canary/finpub/payments?post_id=' + encodeURIComponent(postId) + "&returnUrl=" + encodeURIComponent(window.location.href);
+        if (bankCode) {
+            getPaymentApi += '&bankCode=' + encodeURIComponent(bankCode);
+        }
         var config = {
             method: 'get',
             headers: {
@@ -303,12 +306,19 @@
                 return;
             }
 
-            getPayUrl(postId)
-                .then(res => res.json())
+            var bankCode = button.dataset['fpMembersPaymentBank'];
+
+            getPayUrl(postId, bankCode)
+                .then(function(res) {
+                    return res.json();
+                })
                 .then(function(data) {
                     
                     // TODO: check if mobile
-                    var redirectUrl = mobilecheck()? data.deeplink: data.payUrl;
+                    var redirectUrl = data.payUrl;
+                    if (data.deeplink) {
+                        redirectUrl = mobilecheck()? data.deeplink: data.payUrl;
+                    }
                     
                     window.location.href = redirectUrl;
                 });

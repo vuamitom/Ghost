@@ -27,6 +27,8 @@ An example of integration with theme is below.
                 <h2>This post is for paying subscribers only</h2>
                 {{!-- display pay with momo button --}}
                 <div data-fp-members-payment="{{id}}">Pay with MOMO</div>
+
+                <div data-fp-members-payment="{{id}}" data-fp-members-payment-bank="VCB" >Pay with Vietcombank</div>
                 {{else}}
                 <h2>This post is for subscribers only</h2>
                 {{/if}}
